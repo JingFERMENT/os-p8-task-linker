@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\EmployeeRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -37,6 +39,31 @@ class Employee
 
     #[ORM\Column]
     private ?bool $isActif = null;
+
+    /**
+     * @var Collection<int, Project>
+     */
+    #[ORM\ManyToMany(targetEntity: Project::class, inversedBy: 'employees')]
+    private Collection $project;
+
+    /**
+     * @var Collection<int, timeslot>
+     */
+    #[ORM\OneToMany(targetEntity: timeslot::class, mappedBy: 'employee')]
+    private Collection $timeslot;
+
+    /**
+     * @var Collection<int, Task>
+     */
+    #[ORM\OneToMany(targetEntity: Task::class, mappedBy: 'employee')]
+    private Collection $task;
+
+    public function __construct()
+    {
+        $this->project = new ArrayCollection();
+        $this->timeslot = new ArrayCollection();
+        $this->task = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -135,6 +162,90 @@ class Employee
     public function setIsActif(bool $isActif): static
     {
         $this->isActif = $isActif;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Project>
+     */
+    public function getProject(): Collection
+    {
+        return $this->project;
+    }
+
+    public function addProject(Project $project): static
+    {
+        if (!$this->project->contains($project)) {
+            $this->project->add($project);
+        }
+
+        return $this;
+    }
+
+    public function removeProject(Project $project): static
+    {
+        $this->project->removeElement($project);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, timeslot>
+     */
+    public function getTimeslot(): Collection
+    {
+        return $this->timeslot;
+    }
+
+    public function addTimeslot(timeslot $timeslot): static
+    {
+        if (!$this->timeslot->contains($timeslot)) {
+            $this->timeslot->add($timeslot);
+            $timeslot->setEmployee($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTimeslot(timeslot $timeslot): static
+    {
+        if ($this->timeslot->removeElement($timeslot)) {
+            // set the owning side to null (unless already changed)
+            if ($timeslot->getEmployee() === $this) {
+                $timeslot->setEmployee(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Task>
+     */
+    public function getTask(): Collection
+    {
+        return $this->task;
+    }
+
+    public function addTask(Task $task): static
+    {
+        if (!$this->task->contains($task)) {
+            $this->task->add($task);
+            $task->setEmployee($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTask(Task $task): static
+    {
+        if ($this->task->removeElement($task)) {
+            // set the owning side to null (unless already changed)
+            if ($task->getEmployee() === $this) {
+                $task->setEmployee(null);
+            }
+        }
 
         return $this;
     }

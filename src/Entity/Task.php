@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\TaskRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -22,6 +24,33 @@ class Task
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $deadline = null;
+
+    #[ORM\ManyToOne(inversedBy: 'task')]
+    private ?Employee $employee = null;
+
+    #[ORM\ManyToOne(inversedBy: 'task')]
+    private ?Project $project = null;
+
+    /**
+     * @var Collection<int, Timeslot>
+     */
+    #[ORM\OneToMany(targetEntity: Timeslot::class, mappedBy: 'task')]
+    private Collection $timeslot;
+
+    /**
+     * @var Collection<int, Tag>
+     */
+    #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'tasks')]
+    private Collection $tag;
+
+    #[ORM\ManyToOne(inversedBy: 'tasks')]
+    private ?Statut $statut = null;
+
+    public function __construct()
+    {
+        $this->timeslot = new ArrayCollection();
+        $this->tag = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -60,6 +89,96 @@ class Task
     public function setDeadline(\DateTimeInterface $deadline): static
     {
         $this->deadline = $deadline;
+
+        return $this;
+    }
+
+    public function getEmployee(): ?Employee
+    {
+        return $this->employee;
+    }
+
+    public function setEmployee(?Employee $employee): static
+    {
+        $this->employee = $employee;
+
+        return $this;
+    }
+
+    public function getProject(): ?Project
+    {
+        return $this->project;
+    }
+
+    public function setProject(?Project $project): static
+    {
+        $this->project = $project;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Timeslot>
+     */
+    public function getTimeslot(): Collection
+    {
+        return $this->timeslot;
+    }
+
+    public function addTimeslot(Timeslot $timeslot): static
+    {
+        if (!$this->timeslot->contains($timeslot)) {
+            $this->timeslot->add($timeslot);
+            $timeslot->setTask($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTimeslot(Timeslot $timeslot): static
+    {
+        if ($this->timeslot->removeElement($timeslot)) {
+            // set the owning side to null (unless already changed)
+            if ($timeslot->getTask() === $this) {
+                $timeslot->setTask(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Tag>
+     */
+    public function getTag(): Collection
+    {
+        return $this->tag;
+    }
+
+    public function addTag(Tag $tag): static
+    {
+        if (!$this->tag->contains($tag)) {
+            $this->tag->add($tag);
+        }
+
+        return $this;
+    }
+
+    public function removeTag(Tag $tag): static
+    {
+        $this->tag->removeElement($tag);
+
+        return $this;
+    }
+
+    public function getStatut(): ?Statut
+    {
+        return $this->statut;
+    }
+
+    public function setStatut(?Statut $statut): static
+    {
+        $this->statut = $statut;
 
         return $this;
     }

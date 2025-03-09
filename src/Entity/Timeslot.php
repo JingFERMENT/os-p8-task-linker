@@ -20,6 +20,12 @@ class Timeslot
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $endTime = null;
 
+    #[ORM\ManyToOne(inversedBy: 'timeslot')]
+    private ?Employee $employee = null;
+
+    #[ORM\ManyToOne(inversedBy: 'timeslot')]
+    private ?Task $task = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -45,6 +51,30 @@ class Timeslot
     public function setEndTime(\DateTimeInterface $endTime): static
     {
         $this->endTime = $endTime;
+
+        return $this;
+    }
+
+    public function getEmployee(): ?Employee
+    {
+        return $this->employee;
+    }
+
+    public function setEmployee(?Employee $employee): static
+    {
+        $this->employee = $employee;
+
+        return $this;
+    }
+
+    public function getTask(): ?Task
+    {
+        return $this->task;
+    }
+
+    public function setTask(?Task $task): static
+    {
+        $this->task = $task;
 
         return $this;
     }
