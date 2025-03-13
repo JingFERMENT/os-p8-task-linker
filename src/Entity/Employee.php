@@ -2,14 +2,17 @@
 
 namespace App\Entity;
 
+use App\Enum\ContractName;
+use App\Enum\RoleName;
 use App\Repository\EmployeeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: EmployeeRepository::class)]
-class Employee
+class Employee implements PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -29,10 +32,10 @@ class Employee
     private ?string $password = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $statut = null;
+    private ?ContractName $contract = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $role = null;
+    private ?RoleName $role = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $startDate = null;
@@ -118,24 +121,24 @@ class Employee
         return $this;
     }
 
-    public function getStatut(): ?string
+    public function getContract(): ?ContractName
     {
-        return $this->statut;
+        return $this->contract;
     }
 
-    public function setStatut(string $statut): static
+    public function setContract(ContractName $contract): static
     {
-        $this->statut = $statut;
+        $this->contract = $contract;
 
         return $this;
     }
 
-    public function getRole(): ?string
+    public function getRole(): ?RoleName
     {
         return $this->role;
     }
 
-    public function setRole(string $role): static
+    public function setRole(RoleName $role): static
     {
         $this->role = $role;
 

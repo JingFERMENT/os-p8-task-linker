@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\StatutName;
 use App\Repository\StatutRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -16,7 +17,7 @@ class Statut
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $statutName = null;
+    private ?StatutName $statutName = null;
 
     /**
      * @var Collection<int, Task>
@@ -37,12 +38,12 @@ class Statut
         return $this->id;
     }
 
-    public function getStatutName(): ?string
+    public function getStatutName(): ?StatutName
     {
         return $this->statutName;
     }
 
-    public function setStatutName(string $statutName): static
+    public function setStatutName(StatutName $statutName): static
     {
         $this->statutName = $statutName;
 

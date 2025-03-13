@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\TagName;
 use App\Repository\TagRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -16,7 +17,7 @@ class Tag
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $tagName = null;
+    private ?TagName $tagName = null;
 
     #[ORM\ManyToOne(inversedBy: 'tag')]
     private ?Project $project = null;
@@ -37,12 +38,12 @@ class Tag
         return $this->id;
     }
 
-    public function getTagName(): ?string
+    public function getTagName(): ?TagName
     {
         return $this->tagName;
     }
 
-    public function setTagName(string $tagName): static
+    public function setTagName(TagName $tagName): static
     {
         $this->tagName = $tagName;
 
