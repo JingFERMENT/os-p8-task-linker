@@ -31,8 +31,16 @@ final class TaskFactory extends PersistentProxyObjectFactory
      */
     protected function defaults(): array|callable
     {
+        $project = ProjectFactory::new()->create(); // Ensure task is linked to a project
+
+        // convert to string
+        $projectCreatedAt = $project->getCreatedAt()->format('Y-m-d H:i:s');
+        $projectDeadline = $project->getDeadline()->format('Y-m-d H:i:s');
+        $taskDeadline = self::faker()->dateTimeBetween($projectCreatedAt, $projectDeadline);
+        
         return [
-            'deadline' => self::faker()->dateTime(),
+            'project'  => $project,
+            'deadline' => $taskDeadline,
             'description' => self::faker()->text(),
             'title' => self::faker()->unique()->sentence(),
         ];

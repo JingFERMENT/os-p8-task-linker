@@ -31,10 +31,17 @@ final class TimeslotFactory extends PersistentProxyObjectFactory
      */
     protected function defaults(): array|callable
     {
-        return [
-            'endTime' => self::faker()->dateTime(),
-            'startTime' => self::faker()->dateTime(),
-        ];
+        return function () {
+            
+            $startTime = self::faker()->dateTime();
+            
+            $endTime = (clone $startTime)->modify('+' . self::faker()->numberBetween(1, 90) . ' minutes');
+            return [
+                'endTime' => $endTime,
+                'startTime' => $startTime,
+            ];
+        };
+
     }
 
     /**

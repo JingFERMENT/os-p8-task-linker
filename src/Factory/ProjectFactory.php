@@ -15,9 +15,7 @@ final class ProjectFactory extends PersistentProxyObjectFactory
      *
      * @todo inject services if required
      */
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     public static function class(): string
     {
@@ -31,12 +29,18 @@ final class ProjectFactory extends PersistentProxyObjectFactory
      */
     protected function defaults(): array|callable
     {
-        return [
-            'createdAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
-            'deadline' => self::faker()->dateTime(),
-            'isArchived' => self::faker()->boolean(),
-            'name' => self::faker()->unique()->sentence(),
-        ];
+
+        return function () {
+            $createdAt = \DateTimeImmutable::createFromMutable(self::faker()->dateTimeBetween('2024-01-01', '2025-12-31'));
+            $deadline = (clone $createdAt)->modify('+' . self::faker()->numberBetween(1, 90) . ' days');
+
+            return [
+                'createdAt' => $createdAt,
+                'deadline' => $deadline,
+                'isArchived' => self::faker()->boolean(),
+                'name' => self::faker()->unique()->words(2, true),
+            ];
+        };
     }
 
     /**

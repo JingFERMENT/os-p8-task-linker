@@ -44,16 +44,23 @@ final class EmployeeFactory extends PersistentProxyObjectFactory
      */
     protected function defaults(): array|callable
     {
-        return [
-            'contract' => self::faker()->randomElement(ContractName::cases()),
-            'email' => self::faker()->text(255),
-            'firstname' => self::faker()->text(255),
-            'isActif' => self::faker()->boolean(),
-            'lastname' => self::faker()->text(255),
-            'password' => self::$hashedPassword,
-            'role' => self::faker()->randomElement(RoleName::cases()),
-            'startDate' => self::faker()->dateTime(),
-        ];
+
+        return function () {
+            $firstName = self::faker()->firstName();
+            $email = strtolower($firstName . '@driblet.com');
+
+            return [
+                'contract' => self::faker()->randomElement(ContractName::cases()),
+                'email' => $email,
+                'firstname' => $firstName,
+                'isActif' => self::faker()->boolean(),
+                'lastname' => self::faker()->lastName(255),
+                'password' => self::$hashedPassword,
+                'role' => self::faker()->randomElement(RoleName::cases()),
+                'startDate' => self::faker()->dateTimeBetween('2018-01-01', 'now'),
+            ];
+        };
+        
     }
 
     /**
