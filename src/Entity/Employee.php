@@ -52,7 +52,7 @@ class Employee implements PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, timeslot>
      */
-    #[ORM\OneToMany(targetEntity: timeslot::class, mappedBy: 'employee')]
+    #[ORM\OneToMany(targetEntity: Timeslot::class, mappedBy: 'employee')]
     private Collection $timeslot;
 
     /**
