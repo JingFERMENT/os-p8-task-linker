@@ -16,6 +16,21 @@ class EmployeeRepository extends ServiceEntityRepository
         parent::__construct($registry, Employee::class);
     }
 
+       /**
+        * @return Project[] Returns an array of Project objects
+        */
+        public function findEmployeesByProject(int $id): array
+        {
+            return $this->createQueryBuilder('e')
+                ->leftJoin('e.project ', 'p')
+                ->addSelect('p')
+                ->where('p.id = :projectId')
+                ->setParameter('projectId', $id)
+                ->getQuery()
+                ->getResult()
+            ;
+        }
+
     //    /**
     //     * @return Employee[] Returns an array of Employee objects
     //     */

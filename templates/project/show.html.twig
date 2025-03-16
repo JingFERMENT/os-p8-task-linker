@@ -12,8 +12,9 @@
 				<div class="flex-header">
 					<h1>{{project.name}}</h1>
 					<div class="user-list">
-						<div class="avatar">ND</div>
-						<div class="avatar">DB</div>
+						{% for employee in employees %}
+							<div class="avatar">{{employee.getInitials()}}</div>
+						{% endfor %}
 					</div>
 					<a class="button" href="projet-edit.html">Modifier</a>
 				</div>
@@ -21,75 +22,34 @@
 		</header>
 		<div id="content">
 			<div id="tasks-container">
-				<div class="task-column">
-					<h2>To Do</h2>
-					<div class="tasks-list">
-						<a class="task" href="tache.html">
-							<h3>Gestion des droits d&#039;accès</h3>
-							<p>Un employé ne peut accéder qu&#039;à ses projets</p>
-							<div class="task-infos">
-								<div class="task-deadline">
-									<i class="fa-regular fa-calendar"></i>
-									22/09/2023
-								</div>
-							</div>
-						</a>
-						<a href="tache-add.html" class="task-add">
-							+ Ajouter une tâche
-						</a>
+				{% set taskGroups = {'To Do': tasksToDo, 'Doing': tasksDoing, 'Done': tasksDone} %}
+				{% for status, tasks in taskGroups %}
+					<div class="task-column">
+						<h2>{{status}}</h2>
+						<div class="tasks-list">
+							{% for task in tasks %}
+								<a class="task" href="tache.html">
+									<h3>{{ task.title }}</h3>
+									<p>{{task.description}}</p>
+									<div class="task-infos">
+										<div class="task-deadline">
+											<i class="fa-regular fa-calendar"></i>
+											{{task.deadline|date('d/m/Y')}}
+										</div>
+										{% if task.employee is not null %}
+											<div class="mini-user">
+												{{ task.employee.getInitials() }}
+											</div>
+										{% endif %}
+									</div>
+								</a>
+							{% endfor %}
+							<a href="tache-add.html" class="task-add">
+								+ Ajouter une tâche
+							</a>
+						</div>
 					</div>
-				</div>
-				<div class="task-column">
-					<h2>Doing</h2>
-					<div class="tasks-list">
-						<a class="task" href="tache.html">
-							<h3>Développement de la page employé</h3>
-							<p>Page employé avec liste des employés, édition, modification, suppression et création des employés</p>
-							<div class="task-infos">
-								<div class="task-deadline">
-									<i class="fa-regular fa-calendar"></i>
-									14/09/2023
-								</div>
-								<div class="mini-user">
-									DB
-								</div>
-							</div>
-						</a>
-						<a href="tache-add.html" class="task-add">
-							+ Ajouter une tâche
-						</a>
-					</div>
-				</div>
-				<div class="task-column">
-					<h2>Done</h2>
-					<div class="tasks-list">
-						<a class="task" href="tache.html">
-							<h3>Développement de la structure globale</h3>
-							<p>Intégrer les maquettes</p>
-							<div class="task-infos">
-								<div class="task-deadline">
-									<i class="fa-regular fa-calendar"></i>
-									03/09/2023
-								</div>
-								<div class="mini-user">
-									DB
-								</div>
-							</div>
-						</a>
-						<a class="task" href="tache.html">
-							<h3>Développement de la page projet</h3>
-							<p>Page projet avec liste des tâches, édition, modification, suppression et création des tâches</p>
-							<div class="task-infos">
-								<div class="mini-user">
-									ND
-								</div>
-							</div>
-						</a>
-						<a href="tache-add.html" class="task-add">
-							+ Ajouter une tâche
-						</a>
-					</div>
-				</div>
+				{% endfor %}
 			</div>
 		</div>
 	</main>

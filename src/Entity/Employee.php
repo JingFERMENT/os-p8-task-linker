@@ -253,4 +253,13 @@ class Employee implements PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    /**
+     * function to get the intials of the employee
+     * @return string
+     */
+    public function getInitials(): string
+    {
+        return strtoupper($this->firstname[0] . $this->lastname[0]);
+    }
+
 }

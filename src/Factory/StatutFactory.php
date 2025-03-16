@@ -33,7 +33,7 @@ final class StatutFactory extends PersistentProxyObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'statutName' => self::faker()->randomElement(StatutName::cases()),
+            'statutName' => self::faker()->unique()->randomElement(StatutName::cases()),
         ];
     }
 
