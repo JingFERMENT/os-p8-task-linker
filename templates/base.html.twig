@@ -1,45 +1,47 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width; initial-scale=1" />
-        <title>{% block title %}{% endblock %}- TaskLinker</title>
-        
-        {% block stylesheets %}
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
-         integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
-         crossorigin="anonymous" referrerpolicy="no-referrer" />
-        <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}"/>
-        {% endblock %}
-       
-        {% block javascripts %}
-        <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-        <script src="{{ asset('assets/js/select2') }}"></script>
-        {% endblock %}
-    </head>
-    <body>
-        <div id="main-container">
-        <nav>
-            <a href="{{ path('app_homepage')}}" id="logo">
-            <img src="{{ asset('assets/img/logo.png') }}" alt="Logo TaskLinker" />
-            </a>
-            <ul id="main-menu">
-               <li class="active">
-                  <a href="{{ path('app_homepage')}}">
-                  <i class="fa-solid fa-list-check"></i> Projets
-                  </a>
-               </li>
-               <li>
-                  <a href="employes.html">
-                  <i class="fa-regular fa-user"></i> Équipe
-                  </a>
-               </li>
-            </ul>
-         </nav>
-        {% block body %}
-        {% endblock %}
-        </div>
-    </body>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width; initial-scale=1"/>
+		<title>
+			{% block title %}{% endblock %}- TaskLinker</title>
+
+		{% block stylesheets %}
+			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+			<link rel="stylesheet" href="{{ asset('assets/css/style.css') }}"/>
+			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+		{% endblock %}
+
+		{% block javascripts %}
+			<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+			<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
+		    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+			<script src="{{ asset('assets/js/select2') }}"></script>
+			<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+		{% endblock %}
+	</head>
+	<body>
+		<div id="main-container">
+			<nav>
+				<a href="{{ path('app_homepage')}}" id="logo">
+					<img src="{{ asset('assets/img/logo.png') }}" alt="Logo TaskLinker"/>
+				</a>
+				<ul id="main-menu">
+					<li class="active">
+						<a href="{{ path('app_homepage')}}">
+							<i class="fa-solid fa-list-check"></i>
+							Projets
+						</a>
+					</li>
+					<li>
+						<a href="employes.html">
+							<i class="fa-regular fa-user"></i>
+							Équipe
+						</a>
+					</li>
+				</ul>
+			</nav>
+			{% block body %}{% endblock %}
+		</div>
+	</body>
 </html>

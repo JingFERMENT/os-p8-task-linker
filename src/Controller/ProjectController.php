@@ -23,7 +23,7 @@ final class ProjectController extends AbstractController
         ]);
     }
 
-    #[Route('/project/{id}/', name: 'app_project')]
+    #[Route('/project/{id}/', name: 'app_project', requirements: ['id' => '\d+'])]
     public function show(
         ProjectRepository $projectRepository,
         EmployeeRepository $employeeRepository,
