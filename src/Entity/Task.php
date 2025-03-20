@@ -19,13 +19,14 @@ class Task
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
-    #[ORM\Column(type: Types::TEXT)]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $deadline = null;
 
     #[ORM\ManyToOne(inversedBy: 'task')]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Employee $employee = null;
 
     #[ORM\ManyToOne(inversedBy: 'task')]
@@ -86,7 +87,7 @@ class Task
         return $this->deadline;
     }
 
-    public function setDeadline(\DateTimeInterface $deadline): static
+    public function setDeadline(?\DateTimeInterface $deadline): static
     {
         $this->deadline = $deadline;
 
