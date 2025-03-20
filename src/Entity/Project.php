@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\StatutName;
 use App\Repository\ProjectRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;

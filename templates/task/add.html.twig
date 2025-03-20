@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer une tâche
+{% endblock %}
+
+{% block body %}
+	<main>
+		<header>
+			<div id="current-user"></div>
+			<div id="title-page">
+				<h1>Créer une tâche</h1>
+			</div>
+		</header>
+		<div id="content">
+			{{form_start(form)}}
+
+			{{form_row(form.title)}}
+			{{form_row(form.description)}}
+			{{form_row(form.deadline)}}
+			{{form_row(form.statut)}}
+			{{form_row(form.employee)}}
+
+			<button class="button button-submit">Ajouter</button>
+
+			{{form_end(form)}}
+		</div>
+	</main>
+
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        flatpickr(".js-datepicker", {
+            dateFormat: "d/m/Y", // Format français jj/mm/aaaa
+            allowInput: true
+        });
+    });
+</script>
+{% endblock %}
+

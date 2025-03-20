@@ -28,7 +28,7 @@
 						<h2>{{status}}</h2>
 						<div class="tasks-list">
 							{% for task in tasks %}
-								<a class="task" href="tache.html">
+								<a class="task" href="{{ path('app_task_edit', {'id': project.id, 'taskId': task.id}) }}">
 									<h3>{{ task.title }}</h3>
 									<p>{{task.description}}</p>
 									<div class="task-infos">
@@ -44,7 +44,7 @@
 									</div>
 								</a>
 							{% endfor %}
-							<a href="tache-add.html" class="task-add">
+							<a href="{{ path('app_task_add', {'id': project.id}) }}" class="task-add">
 								+ Ajouter une tâche
 							</a>
 						</div>
