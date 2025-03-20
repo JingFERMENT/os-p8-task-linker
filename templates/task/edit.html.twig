@@ -20,7 +20,7 @@
 			{{form_row(form.employee)}}
 			<br>
 			<button class="button button-submit">Modifier</button>
-			<a href="#" class="delete-task">Supprimer la tâche</a>
+			<a href="{{path('app_task_delete', {'id': form.vars.value.project.id, 'taskId': form.vars.value.id})}}" class="delete-task">Supprimer la tâche</a>
 			{{form_end(form)}}
 		</div>
 	</main>
