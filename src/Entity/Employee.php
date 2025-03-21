@@ -58,7 +58,7 @@ class Employee implements PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Task>
      */
-    #[ORM\OneToMany(targetEntity: Task::class, mappedBy: 'employee')]
+    #[ORM\OneToMany(targetEntity: Task::class, mappedBy: 'employee', cascade: ["persist", "remove"])]
     private Collection $task;
 
     public function __construct()
@@ -261,5 +261,4 @@ class Employee implements PasswordAuthenticatedUserInterface
     {
         return strtoupper($this->firstname[0] . $this->lastname[0]);
     }
-
 }

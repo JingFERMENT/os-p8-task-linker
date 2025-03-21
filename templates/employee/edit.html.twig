@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des employées
+{% endblock %}
+
+{% block body %}
+	<main>
+		<header>
+			<div id="current-user"></div>
+			<div id="title-page">
+				<h1>{{form.vars.value.firstname ~ ' ' ~ form.vars.value.lastname}}</h1>
+			</div>
+		</header>
+		<div id="content">
+			{{form_start(form)}}
+			{{form_row(form.lastname)}}
+			{{form_row(form.firstname)}}
+			{{form_row(form.email)}}
+			<div class="form-flex">
+				{{form_row(form.startDate)}}
+				{{form_row(form.contract)}}
+			</div>
+			<button class="button button-submit">Enregistrer</button>
+			{{form_end(form)}}
+		</div>
+	</main>
+{% endblock %}

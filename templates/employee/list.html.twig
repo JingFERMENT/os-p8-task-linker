@@ -29,16 +29,16 @@
                               </div>
                               <div class="employee-coords">
                                  <strong>{{employee.firstname ~ ' ' ~ employee.lastname}}</strong>
-                                 <span>{{employee.firstname ~ '@driblet.com'}}</span>
+                                 <span>{{employee.email}}</span>
                               </div>
                            </div>
                         </td>
                         <td>{{employee.contract.getLabel()}}</td>
                         <td>
-                           <a class="button button-edit-team" href="employe.html">
+                           <a class="button button-edit-team" href="{{path('app_employee_edit', {'id': employee.id})}}">
                            Éditer
                            </a>
-                           <a class="delete-team" href="#">
+                           <a class="delete-team" href="{{path('app_employee_delete',{'id': employee.id} )}}">
                            Supprimer
                            </a>
                         </td>

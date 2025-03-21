@@ -27,6 +27,7 @@ class Task
 
     #[ORM\ManyToOne(inversedBy: 'task')]
     #[ORM\JoinColumn(nullable: true)]
+    #[ORM\JoinColumn(name: "employee_id", referencedColumnName: "id", onDelete: "CASCADE")]
     private ?Employee $employee = null;
 
     #[ORM\ManyToOne(inversedBy: 'task')]

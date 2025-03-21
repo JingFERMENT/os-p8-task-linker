@@ -33,7 +33,7 @@
 							Projets
 						</a>
 					</li>
-					<li class="{% if app.request.attributes.get('_route') == 'app_employees' %}active{% endif %}">
+					<li class="{% if app.request.attributes.get('_route') in ['app_employees', 'app_employee_edit']  %}active{% endif %}">
 						<a href="{{ path('app_employees')}}">
 							<i class="fa-regular fa-user"></i>
 							Équipe
