@@ -1,0 +1,94 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des employées{% endblock %}
+
+{% block body %}
+<main>
+            <header>
+               <div id="current-user"></div>
+               <div id="title-page">
+                  <h1>Équipe</h1>
+               </div>
+            </header>
+            <div id="content">
+               <table id="team-container">
+                  <thead>
+                     <tr>
+                        <th>Prénom, Nom</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                     </tr>
+                  </thead>
+                  <tbody>
+                     <tr>
+                        <td>
+                           <div class="employee-infos">
+                              <div class="employee-avatar">
+                                 ND
+                              </div>
+                              <div class="employee-coords">
+                                 <strong>Natalie Dillon</strong>
+                                 <span>natalie@driblet.com</span>
+                              </div>
+                           </div>
+                        </td>
+                        <td>CDI</td>
+                        <td>
+                           <a class="button button-edit-team" href="employe.html">
+                           Éditer
+                           </a>
+                           <a class="delete-team" href="#">
+                           Supprimer
+                           </a>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td>
+                           <div class="employee-infos">
+                              <div class="employee-avatar">
+                                 DB
+                              </div>
+                              <div class="employee-coords">
+                                 <strong>Demi Baker</strong>
+                                 <span>demi@driblet.com</span>
+                              </div>
+                           </div>
+                        </td>
+                        <td>CDD</td>
+                        <td>
+                           <a class="button button-edit-team" href="employe.html">
+                           Éditer
+                           </a>
+                           <a class="delete-team" href="#">
+                           Supprimer
+                           </a>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td>
+                           <div class="employee-infos">
+                              <div class="employee-avatar">
+                                 MD
+                              </div>
+                              <div class="employee-coords">
+                                 <strong>Marie Dupont</strong>
+                                 <span>marie@driblet.com</span>
+                              </div>
+                           </div>
+                        </td>
+                        <td>Freelance</td>
+                        <td>
+                           <a class="button button-edit-team" href="employe.html">
+                           Éditer
+                           </a>
+                           <a class="delete-team" href="#">
+                           Supprimer
+                           </a>
+                        </td>
+                     </tr>
+                  </tbody>
+               </table>
+            </div>
+         </main>
+{% endblock %}
+
