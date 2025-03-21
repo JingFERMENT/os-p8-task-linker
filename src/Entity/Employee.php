@@ -10,6 +10,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: EmployeeRepository::class)]
 class Employee implements PasswordAuthenticatedUserInterface
@@ -19,30 +20,73 @@ class Employee implements PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
+    // Firstname 
     #[ORM\Column(length: 255)]
-    private ?string $firstname = null;
+    #[Assert\Length(
+        min: 2,
+        max: 255,
+        minMessage: "Le prénom doit avoir au moins {{ limit }} caractères.",
+        maxMessage: "Le prénom ne peut pas dépasser {{ limit }} caractères. "
+    )]
+    #[Assert\Regex(
+        pattern: "/^[A-Z][a-zA-Z'-]+$/",
+        message: "Le prénom ne doit contenir que des lettres."
+    )]
 
+    // Lastname
+    private ?string $firstname = null;
     #[ORM\Column(length: 255)]
+    #[Assert\Length(
+        min: 2,
+        max: 255,
+        minMessage: "Le nom doit avoir au moins {{ limit }} caractères.",
+        maxMessage: "Le nom ne peut pas dépasser {{ limit }} caractères. "
+    )]
+    #[Assert\Regex(
+        pattern: "/^[A-Z][a-zA-Z'-]+$/",
+        message: "Le nom ne doit contenir que des lettres."
+    )]
     private ?string $lastname = null;
 
+    // Email 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "L'email ne peut pas être vide.")]
+    #[Assert\Email(
+        message: "Votre email '{{ value }}' est invalide",
+        mode: "strict"
+    )]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: "L'email ne peut pas dépasser {{ limit }} caractères. "
+    )]
     private ?string $email = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $password = null;
+    // StartDate
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Assert\LessThanOrEqual(
+        value: 'today',
+        message: 'La date d\'entrée ne peut pas être postérieure à aujourd\'hui.'
+    )]
+    private ?\DateTimeInterface $startDate = null;
 
+    // Contract Statut
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Choice(
+        choices: [ContractName::PermanentContract, ContractName::FixedTermContract, ContractName::Freelancer],
+        message: 'Merci de sélectionner un statut valide.'
+    )]
     private ?ContractName $contract = null;
+
 
     #[ORM\Column(length: 255)]
     private ?RoleName $role = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $startDate = null;
+    #[ORM\Column(length: 255)]
+    private ?string $password = null;
 
     #[ORM\Column]
     private ?bool $isActif = null;
-
     /**
      * @var Collection<int, Project>
      */
@@ -58,7 +102,7 @@ class Employee implements PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Task>
      */
-    #[ORM\OneToMany(targetEntity: Task::class, mappedBy: 'employee', cascade: ["persist", "remove"])]
+    #[ORM\OneToMany(targetEntity: Task::class, mappedBy: 'employee')]
     private Collection $task;
 
     public function __construct()

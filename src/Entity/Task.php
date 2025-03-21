@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TaskRepository::class)]
 class Task
@@ -16,20 +17,33 @@ class Task
     #[ORM\Column]
     private ?int $id = null;
 
+    // title
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Le titre de la tâche est obligatoire.")]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: "Le titre ne peut pas dépasser {{ limit }} caractères.")]
     private ?string $title = null;
 
+    // description
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
+    // deadline
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[Assert\GreaterThanOrEqual(
+        value: 'today',
+        message: 'La date ne peut pas être antérieur à aujourd\'hui.'
+    )]
     private ?\DateTimeInterface $deadline = null;
 
+    // employee
     #[ORM\ManyToOne(inversedBy: 'task')]
     #[ORM\JoinColumn(nullable: true)]
-    #[ORM\JoinColumn(name: "employee_id", referencedColumnName: "id", onDelete: "CASCADE")]
+    #[ORM\JoinColumn(name: "employee_id", referencedColumnName: "id", onDelete: "SET NULL")] //  // if the employee is delete, the task will be assigned to "null"
     private ?Employee $employee = null;
-
+    
+    // project
     #[ORM\ManyToOne(inversedBy: 'task')]
     private ?Project $project = null;
 
@@ -46,6 +60,7 @@ class Task
     private Collection $tag;
 
     #[ORM\ManyToOne(inversedBy: 'tasks')]
+    #[Assert\NotBlank(message: "Merci de selectionner un statut.")]
     private ?Statut $statut = null;
 
     public function __construct()

@@ -21,15 +21,12 @@ class EmployeeType extends AbstractType
         $builder
             ->add('firstname', TextType::class, [
                 'label' => 'Prenom',
-                'required' => true,
             ])
             ->add('lastname', TextType::class, [
                 'label' => 'Nom',
-                'required' => true,
             ])
             ->add('email', EmailType::class, [
                 'label' => 'Email',
-                'required' => true,
             ])
             ->add('contract', ChoiceType::class, [
                 'choices' => [
@@ -38,16 +35,13 @@ class EmployeeType extends AbstractType
                     'Freelance' => ContractName::Freelancer,
                 ],
                 'label' => 'Statut',
-                'required' => true,
             ])
             ->add('startDate', null, [
                 'widget' => 'single_text',
                 'label' => 'Date d\'entrée',
-                'required' => true,
             ])
             // ->add('role', ChoiceType::class, [
             //     'label' => 'role',
-            //     'required' => true,
             // ] )
             // ->add('isActif')
             // ->add('project', EntityType::class, [
@@ -57,7 +51,6 @@ class EmployeeType extends AbstractType
             // ])
             // ->add('password', PasswordType::class, [
             //     'label' => 'Mot de passe',
-            //     'required' => true,
             // ])
         ;
     }
