@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProjectRepository::class)]
 class Project
@@ -18,15 +19,21 @@ class Project
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\Length(
+        min: 2,
+        max: 255,
+        minMessage: "Le titre du projet doit avoir au moins {{ limit }} caractères.",
+        maxMessage: "Le titre du projet ne peut pas dépasser {{ limit }} caractères. "
+    )]
     private ?string $name = null;
 
-    #[ORM\Column]
+    #[ORM\Column (type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE , nullable: true)]
     private ?\DateTimeInterface $deadline = null;
 
-    #[ORM\Column]
+    #[ORM\Column(type: Types::BOOLEAN , nullable: true)]
     private ?bool $isArchived = null;
 
     /**
@@ -107,7 +114,7 @@ class Project
         return $this->isArchived;
     }
 
-    public function setIsArchived(bool $isArchived): static
+    public function setIsArchived(?bool $isArchived): static
     {
         $this->isArchived = $isArchived;
 

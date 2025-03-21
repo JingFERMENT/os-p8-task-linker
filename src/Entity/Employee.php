@@ -91,6 +91,7 @@ class Employee implements PasswordAuthenticatedUserInterface
      * @var Collection<int, Project>
      */
     #[ORM\ManyToMany(targetEntity: Project::class, inversedBy: 'employees')]
+    #[ORM\JoinTable(name: 'employee_project')]
     private Collection $project;
 
     /**

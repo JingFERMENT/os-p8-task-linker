@@ -16,7 +16,7 @@
 			<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 			<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
 		    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-			<script src="{{ asset('assets/js/select2') }}"></script>
+			<script src="{{ asset('assets/js/select.js') }}"></script>
 			<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 		{% endblock %}
 	</head>
@@ -27,7 +27,7 @@
 					<img src="{{ asset('assets/img/logo.png') }}" alt="Logo TaskLinker"/>
 				</a>
 				<ul id="main-menu">
-					<li class="{% if app.request.attributes.get('_route') in ['app_homepage', 'app_project', 'app_task_add', 'app_task_edit']  %}active{% endif %}">
+					<li class="{% if app.request.attributes.get('_route') in ['app_homepage', 'app_project', 'app_task_add', 'app_task_edit', 'app_project_add']  %}active{% endif %}">
 						<a href="{{ path('app_homepage')}}">
 							<i class="fa-solid fa-list-check"></i>
 							Projets

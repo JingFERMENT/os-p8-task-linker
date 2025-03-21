@@ -38,8 +38,7 @@ class Task
     private ?\DateTimeInterface $deadline = null;
 
     // employee
-    #[ORM\ManyToOne(inversedBy: 'task')]
-    #[ORM\JoinColumn(nullable: true)]
+    #[ORM\ManyToOne(targetEntity: Employee::class, inversedBy: 'task')]
     #[ORM\JoinColumn(name: "employee_id", referencedColumnName: "id", onDelete: "SET NULL")] //  // if the employee is delete, the task will be assigned to "null"
     private ?Employee $employee = null;
     

@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Project;
 use App\Enum\StatutName;
+use App\Form\ProjectType;
 use App\Repository\EmployeeRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -10,6 +12,9 @@ use Symfony\Component\Routing\Attribute\Route;
 use App\Repository\ProjectRepository;
 use App\Repository\StatutRepository;
 use App\Repository\TaskRepository;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 final class ProjectController extends AbstractController
 {
@@ -67,5 +72,34 @@ final class ProjectController extends AbstractController
             'tasksDone' => $tasksByStatus['Done'],
             'employees' => $employees,
         ]);
+    }
+
+    #[Route('/project/add', name: 'app_project_add')]
+    public function projectAdd( 
+        Request $request,
+        EntityManagerInterface $entityManager): Response{
+
+            $project = new Project();
+            $form = $this->createForm(ProjectType::class, $project);
+
+            $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){ 
+
+            $project = $form->getData(); //Retrieves Project entity from form.
+
+            foreach ($project->getEmployees() // Loops through selected employees.
+            as $employee) {
+            $employee->addProject($project);} //Updates the Employee entity to ensure bidirectional ManyToMany sync.
+  
+            $entityManager->persist($project); 
+            $entityManager->flush(); 
+            return $this->redirectToRoute('app_homepage');
+        }
+
+        return $this->render('project/add.html.twig', [
+            'form' => $form
+        ]);
+    
     }
 }
