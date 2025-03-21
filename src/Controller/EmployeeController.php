@@ -13,8 +13,10 @@ final class EmployeeController extends AbstractController
     public function index(EmployeeRepository $employeeRepository): Response
     {
         $employees = $employeeRepository->findAll();
+        
         return $this->render('employee/list.html.twig', [
             'employees' => $employees,
         ]);
+
     }
 }
