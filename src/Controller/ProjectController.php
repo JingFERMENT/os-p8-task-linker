@@ -12,6 +12,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use App\Repository\ProjectRepository;
 use App\Repository\StatutRepository;
 use App\Repository\TaskRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -75,31 +76,86 @@ final class ProjectController extends AbstractController
     }
 
     #[Route('/project/add', name: 'app_project_add')]
-    public function projectAdd( 
+    public function projectAdd(
         Request $request,
-        EntityManagerInterface $entityManager): Response{
+        EntityManagerInterface $entityManager
+    ): Response {
 
-            $project = new Project();
-            $form = $this->createForm(ProjectType::class, $project);
+        $project = new Project();
+        $form = $this->createForm(ProjectType::class, $project);
 
-            $form->handleRequest($request);
+        $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid()){ 
+        if ($form->isSubmitted() && $form->isValid()) {
 
             $project = $form->getData(); //Retrieves Project entity from form.
 
-            foreach ($project->getEmployees() // Loops through selected employees.
-            as $employee) {
-            $employee->addProject($project);} //Updates the Employee entity to ensure bidirectional ManyToMany sync.
-  
-            $entityManager->persist($project); 
-            $entityManager->flush(); 
+            foreach (
+                $project->getEmployees() // Loops through selected employees.
+                as $employee
+            ) {
+                $employee->addProject($project);
+            } //Updates the Employee entity to ensure bidirectional ManyToMany sync.
+
+            $entityManager->persist($project);
+            $entityManager->flush();
             return $this->redirectToRoute('app_homepage');
         }
 
         return $this->render('project/add.html.twig', [
             'form' => $form
         ]);
-    
+    }
+
+    #[Route('/project/{id}/edit', name: 'app_project_edit')]
+
+    public function projectEdit(
+        int $id,
+        Request $request,
+        ProjectRepository $projectRepository,
+        EntityManagerInterface $entityManager
+    ): Response {
+
+        $project = $projectRepository->find($id);
+        if (!$project) {
+            return $this->redirectToRoute('app_homepage');
+        }
+
+       // Take a snapshot of employees BEFORE handling the form submission
+        $existingEmployees = new ArrayCollection($project->getEmployees()->toArray());
+
+        // Create and handle the form
+        $form = $this->createForm(ProjectType::class, $project);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $project = $form->getData(); //Retrieves Project entity from form.
+
+            foreach (
+                $project->getEmployees() // newly updated list of employees after the form submission.
+                as $employee
+            ) {
+                if (!$existingEmployees->contains($employee)) {
+                    $employee->addProject($project);
+                }
+            };
+
+            // Remove employees that are no longer selected
+            foreach (
+                $existingEmployees 
+                as $oldEmployee
+            ) {
+                if(!$project->getEmployees()->contains($oldEmployee)) {
+                    $oldEmployee->removeProject($project);
+                }
+            }
+
+            $entityManager->flush();
+            return $this->redirectToRoute('app_homepage');
+        }
+        return $this->render('project/edit.html.twig', [
+            'form' => $form
+        ]);
     }
 }
