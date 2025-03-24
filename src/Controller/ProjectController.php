@@ -38,10 +38,8 @@ final class ProjectController extends AbstractController
         int $id,
     ): Response {
 
-        // fetch the project 
         $project = $projectRepository->find($id);
 
-        // if no project correspond, redirect to the home page
         if (!$project) {
             return $this->redirectToRoute('app_homepage');
         }
@@ -82,6 +80,7 @@ final class ProjectController extends AbstractController
     ): Response {
 
         $project = new Project();
+
         $form = $this->createForm(ProjectType::class, $project);
 
         $form->handleRequest($request);
@@ -121,7 +120,7 @@ final class ProjectController extends AbstractController
             return $this->redirectToRoute('app_homepage');
         }
 
-       // Take a snapshot of employees BEFORE handling the form submission
+        // Take a snapshot of employees BEFORE handling the form submission
         $existingEmployees = new ArrayCollection($project->getEmployees()->toArray());
 
         // Create and handle the form
@@ -143,10 +142,10 @@ final class ProjectController extends AbstractController
 
             // Remove employees that are no longer selected
             foreach (
-                $existingEmployees 
+                $existingEmployees
                 as $oldEmployee
             ) {
-                if(!$project->getEmployees()->contains($oldEmployee)) {
+                if (!$project->getEmployees()->contains($oldEmployee)) {
                     $oldEmployee->removeProject($project);
                 }
             }
@@ -157,5 +156,32 @@ final class ProjectController extends AbstractController
         return $this->render('project/edit.html.twig', [
             'form' => $form
         ]);
+    }
+
+    #[Route('/project/{id}/archive', name: 'app_project_archive'), ]
+
+    public function archiveProject(
+        int $id,
+        ProjectRepository $projectRepository,
+        EntityManagerInterface $entityManager
+    ): Response {
+
+        $project = $projectRepository->find($id);
+
+        if (!$project) {
+            return $this->redirectToRoute('app_homepage');
+        };
+
+        if($project->isArchived()) {
+            return $this->redirectToRoute('app_homepage');
+        }
+
+        // Set isArchived to true (1)
+        $project->setIsArchived(true);
+       
+        // Persist the change
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_homepage');
     }
 }
