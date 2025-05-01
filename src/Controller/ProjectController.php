@@ -151,7 +151,7 @@ final class ProjectController extends AbstractController
             }
 
             $entityManager->flush();
-            return $this->redirectToRoute('app_homepage');
+            return $this->redirectToRoute('app_project', ['id' => $id]);
         }
         return $this->render('project/edit.html.twig', [
             'form' => $form
