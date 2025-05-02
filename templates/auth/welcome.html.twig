@@ -1,0 +1,14 @@
+{% extends 'auth/base-logout.html.twig' %}
+
+
+{% block title %}Bienvenue sur TaskLinker
+{% endblock %}
+
+{% block body %}
+	<h1>Bienvenue sur TaskLinker</h1>
+	<h3>Commencez dès maintennant - gratuitement!</h3>
+	<p>Vous avez déjà un compte?</p>
+	<a href="" class="button button-submit-connect">Se connecter</a>
+	<div class="separator"><hr>ou<hr></div>
+	<a href="{{path('app_registration')}}" class="button button-submit-registration">S'inscrire</a>
+{% endblock %}
