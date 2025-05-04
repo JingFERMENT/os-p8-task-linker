@@ -1,37 +1,46 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des projets{% endblock %}
+{% block title %}Liste des projets
+{% endblock %}
 
 {% block body %}
-<main>
-    <header>
-        <div id="current-user"></div>
-        <div id="title-page">
-            <h1>Projets</h1>
-        </div>
-    </header>
-    <div id="content">
-        <div id="projects-container">
-            {% for project in projects %}
-            {% if not project.isArchived %}
-            <article class="card-project">
-                <a href="{{ path('app_project', {'id': project.id}) }}">
-                        <h2>{{project.name}}</h2>
-                </a>
-                <div class="card-project-icons">
-                    <a href="{{ path('app_project_edit', {'id': project.id}) }}"><i class="fa-solid fa-pen"></i></a>
-                    <a href="{{ path('app_project_archive', { id: project.id }) }}"><i class="fa-solid fa-trash"></i></a>
-                </div>
-            </article>
-            {% endif %}
-            {% endfor %} 
-            <article class="card-project">
-                <a href="{{path('app_project_add')}}">
-                    <i class="fa-solid fa-circle-plus add-project-icon"></i>
-                    <h2>Ajouter un projet</h2>
-                </a>
-            </article>
-        </div>
-    </div>
-</main>
+	<main>
+		<header>
+			<div id="current-user">
+				{% if app.user %}
+					<a href="{{path('app_logout')}}" class="connected-avatar">{{app.user.getInitials()}}</a>
+				{% endif %}
+			</div>
+			<div id="title-page">
+				<h1>Projets</h1>
+			</div>
+		</header>
+		<div id="content">
+			<div id="projects-container">
+				{% for project in projects %}
+					{% if not project.isArchived %}
+						<article class="card-project">
+							<a href="{{ path('app_project', {'id': project.id}) }}">
+								<h2>{{project.name}}</h2>
+							</a>
+							<div class="card-project-icons">
+								<a href="{{ path('app_project_edit', {'id': project.id}) }}">
+									<i class="fa-solid fa-pen"></i>
+								</a>
+								<a href="{{ path('app_project_archive', { id: project.id }) }}">
+									<i class="fa-solid fa-trash"></i>
+								</a>
+							</div>
+						</article>
+					{% endif %}
+				{% endfor %}
+				<article class="card-project">
+					<a href="{{path('app_project_add')}}">
+						<i class="fa-solid fa-circle-plus add-project-icon"></i>
+						<h2>Ajouter un projet</h2>
+					</a>
+				</article>
+			</div>
+		</div>
+	</main>
 {% endblock %}

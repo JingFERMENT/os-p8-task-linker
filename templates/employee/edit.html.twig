@@ -6,7 +6,11 @@
 {% block body %}
 	<main>
 		<header>
-			<div id="current-user"></div>
+			<div id="current-user">
+				{% if app.user %}
+					<a href="{{path('app_logout')}}" class="connected-avatar">{{app.user.getInitials()}}</a>
+				{% endif %}
+			</div>
 			<div id="title-page">
 				<h1>{{form.vars.value.firstname ~ ' ' ~ form.vars.value.lastname}}</h1>
 			</div>

@@ -7,12 +7,13 @@
 	<h1 class="registration-title">S'inscrire</h1>
 	{{ form_errors(registrationForm) }}
 	{{ form_start(registrationForm) }}
-		{{form_row(registrationForm.lastname)}}
-		{{form_row(registrationForm.firstname)}}
-		{{form_row(registrationForm.email)}}
-		{{form_row(registrationForm.plainPassword.first)}}
-		{{form_row(registrationForm.plainPassword.second)}}
+	{{form_row(registrationForm.lastname)}}
+	{{form_row(registrationForm.firstname)}}
+	{{form_row(registrationForm.email)}}
+	{{form_row(registrationForm.plainPassword.first)}}
+	{{form_row(registrationForm.plainPassword.second)}}
 	<button type="submit" class="button button-submit">Continuer</button>
-	<a href="#">Vous avez déjà un compte ? </a>
+	<a href="{{path('app_login')}}">Vous avez déjà un compte ?
+	</a>
 	{{form_end(registrationForm)}}
 {% endblock %}

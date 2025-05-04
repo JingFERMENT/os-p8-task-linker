@@ -7,7 +7,11 @@
 {% block body %}
 	<main>
 		<header>
-			<div id="current-user"></div>
+			<div id="current-user">
+				{% if app.user %}
+				<a href = "{{path('app_logout')}}" class="connected-avatar">{{app.user.getInitials()}}</a>	
+				{% endif %}
+			</div>
 			<div id="title-page">
 				<div class="flex-header">
 					<h1>{{project.name}}</h1>

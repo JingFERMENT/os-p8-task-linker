@@ -1,24 +1,29 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Nouveau projet{% endblock %}
+{% block title %}Nouveau projet
+{% endblock %}
 
 {% block body %}
-<main>
-    <header>
-        <div id="current-user"></div>
-        <div id="title-page">
-            <h1>Nouveau projet</h1>
-        </div>
-    </header>
-    <div id="content">
-       {{form_start(form)}}
+	<main>
+		<header>
+			<div id="current-user">
+				{% if app.user %}
+					<a href="{{path('app_logout')}}" class="connected-avatar">{{app.user.getInitials()}}</a>
+				{% endif %}
+			</div>
+			<div id="title-page">
+				<h1>Nouveau projet</h1>
+			</div>
+		</header>
+		<div id="content">
+			{{form_start(form)}}
 
 			{{form_row(form.name)}}
 			{{form_row(form.employees)}}
-             <br>
+			<br>
 			<button class="button button-submit">Continuer</button>
 
 			{{form_end(form)}}
-    </div>
-</main>
+		</div>
+	</main>
 {% endblock %}

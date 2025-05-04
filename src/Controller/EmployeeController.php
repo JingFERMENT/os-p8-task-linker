@@ -8,17 +8,23 @@ use App\Enum\RoleName;
 use App\Form\EmployeeType;
 use App\Form\RegistrationFormType;
 use App\Repository\EmployeeRepository;
+use App\Security\LoginFormAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+
 
 final class EmployeeController extends AbstractController
 {
-    
-    
+
+
     #[Route('/welcome', name: 'app_welcome')]
     public function welcome(): Response
     {
@@ -26,16 +32,22 @@ final class EmployeeController extends AbstractController
     }
 
     #[Route('/registration', name: 'app_registration')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
-    {
-        $user = new Employee();
-        $user->setRoles(['CDI']);
-        $user->setStartDate(new \DateTime('today'));
-        $user->setContract(ContractName::PermanentContract);
-        $user->setRole(RoleName::ProjectManager);
-        $user->setIsActif(true);
+    public function register(
+        Request $request,
+        UserPasswordHasherInterface $userPasswordHasher,
+        EntityManagerInterface $entityManager,
+        UserAuthenticatorInterface $userAuthenticator,
+        LoginFormAuthenticator $loginFormAuthenticator
+    ): Response {
+        $employee = new Employee();
+        // to several mandatory fields, we set default values
+        $employee->setStartDate(new \DateTime('today'));
+        $employee->setContract(ContractName::PermanentContract);
+        $employee->setRoles(['ROLE_USER']);
+        $employee->setRole(RoleName::ProjectManager);
+        $employee->setIsActif(true);
 
-        $form = $this->createForm(RegistrationFormType::class, $user);
+        $form = $this->createForm(RegistrationFormType::class, $employee);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -43,21 +55,46 @@ final class EmployeeController extends AbstractController
             $plainPassword = $form->get('plainPassword')->getData();
 
             // encode the plain password
-            $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
+            $employee->setPassword($userPasswordHasher->hashPassword($employee, $plainPassword));
 
-            $entityManager->persist($user);
+            $entityManager->persist($employee);
             $entityManager->flush();
 
-            // do anything else you need here, like send an email
+            $userAuthenticator->authenticateUser(
+                $employee,
+                $loginFormAuthenticator,
+                $request
+            );
 
             return $this->redirectToRoute('app_homepage');
         }  // ELSE {
-        //     dump($form);die;
+        //     dd($form);
         // }
 
-        return $this->render('auth/registration.html.twig', [
+        return $this->render('auth/register.html.twig', [
             'registrationForm' => $form,
         ]);
+    }
+
+    #[Route(path: '/login', name: 'app_login')]
+    public function login(AuthenticationUtils $authenticationUtils): Response
+    {
+        // get the login error if there is one
+        $error = $authenticationUtils->getLastAuthenticationError();
+
+        // last username entered by the user
+        $lastUsername = $authenticationUtils->getLastUsername();
+
+        return $this->render('auth/login.html.twig', [
+            'last_username' => $lastUsername,
+            'error' => $error,
+        ]);
+    }
+
+    #[Route(path: '/logout', name: 'app_logout')]
+    public function logout(): void
+    {
+        throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
 
     #[Route('/employees', name: 'app_employees')]
@@ -98,6 +135,7 @@ final class EmployeeController extends AbstractController
         ]);
     }
 
+    #[IsGranted('IS_AUTHENTICATED')]
     #[Route('/employee/{id}/delete', name: 'app_employee_delete', requirements: ['id' => '\d+'])]
     public function employeeDelete(int $id, EmployeeRepository $employeeRepository, EntityManagerInterface $entityManager)
     {

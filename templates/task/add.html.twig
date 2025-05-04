@@ -6,7 +6,11 @@
 {% block body %}
 	<main>
 		<header>
-			<div id="current-user"></div>
+			<div id="current-user">
+				{% if app.user %}
+				<a href = "{{path('app_logout')}}" class="connected-avatar">{{app.user.getInitials()}}</a>	
+				{% endif %}
+			</div>
 			<div id="title-page">
 				<h1>Créer une tâche</h1>
 			</div>
@@ -20,8 +24,7 @@
 			{{form_row(form.statut)}}
 			{{form_row(form.employee)}}
 
-			<button class="button button-submit">Ajouter</button>
-
+			<button class="button button-submit">Ajouter</button>		
 			{{form_end(form)}}
 		</div>
 	</main>
