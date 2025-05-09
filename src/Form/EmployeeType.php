@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\Employee;
 use App\Entity\Project;
 use App\Enum\ContractName;
+use App\Enum\RoleName;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -13,7 +14,7 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
+use Symfony\Component\Security\Core\Role\Role;
 
 class EmployeeType extends AbstractType
 {
@@ -41,9 +42,13 @@ class EmployeeType extends AbstractType
                 'widget' => 'single_text',
                 'label' => 'Date d\'entrée',
             ])
-            // ->add('role', ChoiceType::class, [
-            //     'label' => 'role',
-            // ] )
+            ->add('role', ChoiceType::class, [
+                'choices' => [
+                    'Chef de projet' => RoleName::ProjectManager,
+                    'Collaborateur' => RoleName::Collaborator,
+                ],
+                'label' => 'Role',
+            ] )
             // ->add('isActif')
             // ->add('project', EntityType::class, [
             //     'class' => Project::class,

@@ -15,33 +15,69 @@ use App\Repository\TaskRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 final class ProjectController extends AbstractController
 {
-    #[Route('/', name: 'app_homepage')]
-    public function index(ProjectRepository $projectRepository): Response
+
+    #[Route('/', name: 'app_projects')]
+    public function index(ProjectRepository $projectRepository, Security $security): Response
     {
-        $projects = $projectRepository->findAll();
+        // Get the currently authenticated user
+        $employee = $security->getUser();
+
+        if ($security->isGranted('ROLE_ADMIN')) {
+            
+            $projects = $projectRepository->findBy(['isArchived' => false]); // Fetch all non-archived projects
+
+        } elseif ($security->isGranted('ROLE_USER')) {
+
+            $projects = $projectRepository->findByEmployee($employee); // Fetch projects associated with the employee
+
+        } else {
+
+            return $this->redirectToRoute('app_projects'); // Redirect if no valid role is found
+        }
 
         return $this->render('project/list.html.twig', [
             'projects' => $projects,
         ]);
     }
 
-    #[Route('/project/{id}/', name: 'app_project', requirements: ['id' => '\d+'])]
+
+    #[Route('/projects/{id}/', name: 'app_project', requirements: ['id' => '\d+'])]
     public function show(
         ProjectRepository $projectRepository,
         EmployeeRepository $employeeRepository,
         TaskRepository $taskRepository,
         StatutRepository $statutRepository,
         int $id,
+        Security $security
     ): Response {
 
         $project = $projectRepository->find($id);
 
         if (!$project) {
-            return $this->redirectToRoute('app_homepage');
+            return $this->redirectToRoute('app_projects');
+        }
+
+        // Get the currently authenticated user
+        $employee = $security->getUser();
+
+        //if it's an admin, show all employees
+        if ($security->isGranted('ROLE_ADMIN')) {
+        } elseif ($security->isGranted('ROLE_USER')) {
+
+            //if it's a user, check if the employee is associated with the project
+            if (!$project->getEmployees()->contains($employee)) {
+                return $this->redirectToRoute('app_projects');
+            }
+        } else {
+            // else redirect if employee is not associated with the project
+            return $this->redirectToRoute('app_projects');
         }
 
         // fetch the employees 
@@ -73,11 +109,16 @@ final class ProjectController extends AbstractController
         ]);
     }
 
-    #[Route('/project/add', name: 'app_project_add')]
+
+    #[Route('/projects/add', name: 'app_project_add')]
     public function projectAdd(
         Request $request,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager, Security $security
     ): Response {
+
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            return $this->redirectToRoute('app_projects');
+        }
 
         $project = new Project();
 
@@ -98,7 +139,7 @@ final class ProjectController extends AbstractController
 
             $entityManager->persist($project);
             $entityManager->flush();
-            return $this->redirectToRoute('app_homepage');
+            return $this->redirectToRoute('app_projects');
         }
 
         return $this->render('project/add.html.twig', [
@@ -106,7 +147,8 @@ final class ProjectController extends AbstractController
         ]);
     }
 
-    #[Route('/project/{id}/edit', name: 'app_project_edit')]
+    #[IsGranted('ROLE_ADMIN')]
+    #[Route('/projects/{id}/edit', name: 'app_project_edit')]
 
     public function projectEdit(
         int $id,
@@ -117,7 +159,7 @@ final class ProjectController extends AbstractController
 
         $project = $projectRepository->find($id);
         if (!$project) {
-            return $this->redirectToRoute('app_homepage');
+            return $this->redirectToRoute('app_projects');
         }
 
         // Take a snapshot of employees BEFORE handling the form submission
@@ -158,7 +200,8 @@ final class ProjectController extends AbstractController
         ]);
     }
 
-    #[Route('/project/{id}/archive', name: 'app_project_archive'), ]
+    #[IsGranted('ROLE_ADMIN')]
+    #[Route('/projects/{id}/archive', name: 'app_project_archive'),]
 
     public function archiveProject(
         int $id,
@@ -169,19 +212,19 @@ final class ProjectController extends AbstractController
         $project = $projectRepository->find($id);
 
         if (!$project) {
-            return $this->redirectToRoute('app_homepage');
+            return $this->redirectToRoute('app_projects');
         };
 
-        if($project->isArchived()) {
-            return $this->redirectToRoute('app_homepage');
+        if ($project->isArchived()) {
+            return $this->redirectToRoute('app_projects');
         }
 
         // Set isArchived to true (1)
         $project->setIsArchived(true);
-       
+
         // Persist the change
         $entityManager->flush();
 
-        return $this->redirectToRoute('app_homepage');
+        return $this->redirectToRoute('app_projects');
     }
 }

@@ -24,7 +24,6 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 final class EmployeeController extends AbstractController
 {
 
-
     #[Route('/welcome', name: 'app_welcome')]
     public function welcome(): Response
     {
@@ -44,7 +43,7 @@ final class EmployeeController extends AbstractController
         $employee->setStartDate(new \DateTime('today'));
         $employee->setContract(ContractName::PermanentContract);
         $employee->setRoles(['ROLE_USER']);
-        $employee->setRole(RoleName::ProjectManager);
+        $employee->setRole(RoleName::Collaborator);
         $employee->setIsActif(true);
 
         $form = $this->createForm(RegistrationFormType::class, $employee);
@@ -66,7 +65,7 @@ final class EmployeeController extends AbstractController
                 $request
             );
 
-            return $this->redirectToRoute('app_homepage');
+            return $this->redirectToRoute('app_projects');
         }  // ELSE {
         //     dd($form);
         // }
@@ -99,7 +98,7 @@ final class EmployeeController extends AbstractController
 
     #[Route('/employees', name: 'app_employees')]
     public function index(EmployeeRepository $employeeRepository): Response
-    {
+    {        
         $employees = $employeeRepository->findAll();
 
         return $this->render('employee/list.html.twig', [
@@ -107,7 +106,7 @@ final class EmployeeController extends AbstractController
         ]);
     }
 
-    #[Route('/employee/{id}/edit', name: 'app_employee_edit', requirements: ['id' => '\d+'])]
+    #[Route('/employees/{id}/edit', name: 'app_employees_edit', requirements: ['id' => '\d+'])]
     public function employeeEdit(
         Request $request,
         EmployeeRepository $employeeRepository,
@@ -126,6 +125,15 @@ final class EmployeeController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $businessRole = $employee->getRole();
+
+            if($businessRole === RoleName::ProjectManager) {
+                $employee->setRoles(['ROLE_ADMIN']);
+            } else {
+                $employee->setRoles(['ROLE_USER']);
+            }
+
+            $entityManager->persist($employee);
             $entityManager->flush();
             return $this->redirectToRoute('app_employees');
         }
@@ -135,8 +143,7 @@ final class EmployeeController extends AbstractController
         ]);
     }
 
-    #[IsGranted('IS_AUTHENTICATED')]
-    #[Route('/employee/{id}/delete', name: 'app_employee_delete', requirements: ['id' => '\d+'])]
+    #[Route('/employees/{id}/delete', name: 'app_employees_delete', requirements: ['id' => '\d+'])]
     public function employeeDelete(int $id, EmployeeRepository $employeeRepository, EntityManagerInterface $entityManager)
     {
 

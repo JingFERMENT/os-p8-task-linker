@@ -20,7 +20,9 @@
 							<div class="avatar">{{employee.getInitials()}}</div>
 						{% endfor %}
 					</div>
+					{% if is_granted('ROLE_ADMIN') %}
 					<a class="button" href="{{ path('app_project_edit', {'id': project.id}) }}">Modifier</a>
+					{% endif %}
 				</div>
 			</div>
 		</header>

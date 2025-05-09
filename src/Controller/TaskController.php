@@ -14,10 +14,14 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
+// This attribute ensures that the user is authenticated before accessing any route in this controller.
 final class TaskController extends AbstractController
-{
-    #[Route('project/{id}/task/add', name: 'app_task_add')]
+{  
+
+    #[Route('projects/{id}/task/add', name: 'app_task_add')]
     public function taskAdd(
         int $id,
         Request $request,
@@ -47,7 +51,7 @@ final class TaskController extends AbstractController
         ]);
     }
 
-    #[Route('project/{id}/task/{taskId}/edit', name: 'app_task_edit')]
+    #[Route('projects/{id}/task/{taskId}/edit', name: 'app_task_edit')]
     public function taskEdit(
         int $id,
         int $taskId,
@@ -81,7 +85,7 @@ final class TaskController extends AbstractController
         ]);
     }
 
-    #[Route('project/{id}/task/{taskId}/delete', name: 'app_task_delete')]
+    #[Route('projects/{id}/task/{taskId}/delete', name: 'app_task_delete')]
     public function taskDelete(
         int $id,
         int $taskId,
@@ -104,8 +108,6 @@ final class TaskController extends AbstractController
             $entityManager->remove($task); 
             $entityManager->flush();
             return $this->redirectToRoute('app_project', ['id' => $project->getId()]);
-
     }  
-
 
 }
