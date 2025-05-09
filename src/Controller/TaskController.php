@@ -28,7 +28,6 @@ final class TaskController extends AbstractController
         Request $request,
         ProjectRepository $projectRepository,
         EntityManagerInterface $entityManager,
-        Security $security
     ): Response {
         $project = $projectRepository->find($id);
 
@@ -36,20 +35,12 @@ final class TaskController extends AbstractController
             return $this->redirectToRoute('app_homepage');
         }
 
-        // Get the currently authenticated user
-        $employee = $security->getUser();
-
-        if ($security->isGranted('ROLE_ADMIN')) {
-            
-        } elseif ($security->isGranted('ROLE_USER')) {
-
-            //if it's a user, check if the employee is associated with the project
-            if (!$project->getEmployees()->contains($employee)) {
-                return $this->redirectToRoute('app_project', ['id' => $project->getId()]);
-            }
-        } else {
-            // else redirect if employee is not associated with the project
-            return $this->redirectToRoute('app_project', ['id' => $project->getId()]);
+        try {
+            // Check if the user has access to the project
+            $this->denyAccessUnlessGranted('PROJECT_VIEW', $project);
+        } catch (AccessDeniedException $e) {
+            // Handle the exception if access is denied
+            return $this->redirectToRoute('app_projects');
         }
 
         $task = new Task();
@@ -77,30 +68,19 @@ final class TaskController extends AbstractController
         ProjectRepository $projectRepository,
         TaskRepository $taskRepository,
         EntityManagerInterface $entityManager,
-        Security $security
     ): Response {
-        
-       
 
         $project = $projectRepository->find($id);
         if (!$project) {
             return $this->redirectToRoute('app_homepage');
         }
 
-         // Get the currently authenticated user
-        $employee = $security->getUser();
-
-        if ($security->isGranted('ROLE_ADMIN')) {
-            
-        } elseif ($security->isGranted('ROLE_USER')) {
-
-            //if it's a user, check if the employee is associated with the project
-            if (!$project->getEmployees()->contains($employee)) {
-                return $this->redirectToRoute('app_project', ['id' => $project->getId()]);
-            }
-        } else {
-            // else redirect if employee is not associated with the project
-            return $this->redirectToRoute('app_project', ['id' => $project->getId()]);
+         try {
+            // Check if the user has access to the project
+            $this->denyAccessUnlessGranted('PROJECT_VIEW', $project);
+        } catch (AccessDeniedException $e) {
+            // Handle the exception if access is denied
+            return $this->redirectToRoute('app_projects');
         }
 
         $task = $taskRepository->find($taskId);
@@ -129,7 +109,6 @@ final class TaskController extends AbstractController
         ProjectRepository $projectRepository,
         TaskRepository $taskRepository,
         EntityManagerInterface $entityManager,
-        Security $security
     ): Response {
             
             $project = $projectRepository->find($id);
@@ -137,20 +116,12 @@ final class TaskController extends AbstractController
                 return $this->redirectToRoute('app_homepage');
             }
 
-              // Get the currently authenticated user
-        $employee = $security->getUser();
-
-        if ($security->isGranted('ROLE_ADMIN')) {
-            
-        } elseif ($security->isGranted('ROLE_USER')) {
-
-            //if it's a user, check if the employee is associated with the project
-            if (!$project->getEmployees()->contains($employee)) {
-                return $this->redirectToRoute('app_project', ['id' => $project->getId()]);
-            }
-        } else {
-            // else redirect if employee is not associated with the project
-            return $this->redirectToRoute('app_project', ['id' => $project->getId()]);
+         try {
+            // Check if the user has access to the project
+            $this->denyAccessUnlessGranted('PROJECT_VIEW', $project);
+        } catch (AccessDeniedException $e) {
+            // Handle the exception if access is denied
+            return $this->redirectToRoute('app_projects');
         }
     
             $task = $taskRepository->find($taskId);

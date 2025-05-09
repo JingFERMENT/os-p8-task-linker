@@ -27,16 +27,15 @@ final class ProjectController extends AbstractController
     public function index(ProjectRepository $projectRepository, Security $security): Response
     {
         // Get the currently authenticated user
-        $employee = $security->getUser();
+        $employee = $security->getUser();        
 
-        if ($security->isGranted('ROLE_ADMIN')) {
-            
-            $projects = $projectRepository->findAll(); // Fetch all projects
-
+        // Check if the user has the ROLE_ADMIN role    
+        if ($this->isGranted('ROLE_ADMIN')) {
+            // If the user is an admin, fetch all projects
+            $projects = $projectRepository->findAll();
         } elseif ($security->isGranted('ROLE_USER')) {
 
             $projects = $projectRepository->findByEmployee($employee); // Fetch projects associated with the employee
-
         } else {
 
             return $this->redirectToRoute('app_projects'); // Redirect if no valid role is found
@@ -54,8 +53,7 @@ final class ProjectController extends AbstractController
         EmployeeRepository $employeeRepository,
         TaskRepository $taskRepository,
         StatutRepository $statutRepository,
-        int $id,
-        Security $security
+        int $id
     ): Response {
 
         $project = $projectRepository->find($id);
@@ -64,23 +62,14 @@ final class ProjectController extends AbstractController
             return $this->redirectToRoute('app_projects');
         }
 
-        // Get the currently authenticated user
-        $employee = $security->getUser();
-
-        //if it's an admin, show all employees
-        if ($security->isGranted('ROLE_ADMIN')) {
-            
-        } elseif ($security->isGranted('ROLE_USER')) {
-
-            //if it's a user, check if the employee is associated with the project
-            if (!$project->getEmployees()->contains($employee)) {
-                return $this->redirectToRoute('app_projects');
-            }
-        } else {
-            // else redirect if employee is not associated with the project
+        try {
+            // Check if the user has access to the project
+            $this->denyAccessUnlessGranted('PROJECT_VIEW', $project);
+        } catch (AccessDeniedException $e) {
+            // Handle the exception if access is denied
             return $this->redirectToRoute('app_projects');
         }
-
+        
         // fetch the employees 
         $employees = $employeeRepository->findEmployeesByProject($id);
 
@@ -114,7 +103,8 @@ final class ProjectController extends AbstractController
     #[Route('/projects/add', name: 'app_project_add')]
     public function projectAdd(
         Request $request,
-        EntityManagerInterface $entityManager, Security $security
+        EntityManagerInterface $entityManager,
+        Security $security
     ): Response {
 
         if (!$this->isGranted('ROLE_ADMIN')) {
