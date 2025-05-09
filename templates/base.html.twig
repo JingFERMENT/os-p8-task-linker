@@ -33,12 +33,14 @@
 							Projets
 						</a>
 					</li>
+					{% if is_granted('ROLE_ADMIN') %}
 					<li class="{% if app.request.attributes.get('_route') in ['app_employees', 'app_employees_edit']  %}active{% endif %}">
 						<a href="{{ path('app_employees')}}">
 							<i class="fa-regular fa-user"></i>
 							Équipe
 						</a>
 					</li>
+					{% endif %}
 				</ul>
 			</nav>
 			{% block body %}{% endblock %}
