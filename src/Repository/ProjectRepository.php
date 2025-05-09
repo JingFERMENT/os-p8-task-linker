@@ -17,7 +17,19 @@ class ProjectRepository extends ServiceEntityRepository
         parent::__construct($registry, Project::class);
     }
 
-    //    /**
+         public function findByEmployee(Employee $employee): Array
+       {
+           return $this->createQueryBuilder('p')
+           //employees is an entity in relation with project
+               ->join('p.employees', 'e')
+               ->where('e = :employees')
+               ->setParameter('employees', $employee)
+               ->getQuery()
+               ->getResult()
+           ;
+       }
+
+           //    /**
     //     * @return Project[] Returns an array of Project objects
     //     */
     //    public function findNonArchivedProject(): array
@@ -38,16 +50,4 @@ class ProjectRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
-
-         public function findByEmployee(Employee $employee): Array
-       {
-           return $this->createQueryBuilder('p')
-           //employees is an entity in relation with project
-               ->join('p.employees', 'e')
-               ->where('e = :employees')
-               ->setParameter('employees', $employee)
-               ->getQuery()
-               ->getResult()
-           ;
-       }
 }

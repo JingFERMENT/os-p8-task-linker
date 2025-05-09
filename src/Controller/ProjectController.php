@@ -31,7 +31,7 @@ final class ProjectController extends AbstractController
 
         if ($security->isGranted('ROLE_ADMIN')) {
             
-            $projects = $projectRepository->findBy(['isArchived' => false]); // Fetch all non-archived projects
+            $projects = $projectRepository->findAll(); // Fetch all projects
 
         } elseif ($security->isGranted('ROLE_USER')) {
 
@@ -69,6 +69,7 @@ final class ProjectController extends AbstractController
 
         //if it's an admin, show all employees
         if ($security->isGranted('ROLE_ADMIN')) {
+            
         } elseif ($security->isGranted('ROLE_USER')) {
 
             //if it's a user, check if the employee is associated with the project

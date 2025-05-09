@@ -11,6 +11,7 @@ use App\Repository\StatutRepository;
 use App\Repository\TaskRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -26,12 +27,29 @@ final class TaskController extends AbstractController
         int $id,
         Request $request,
         ProjectRepository $projectRepository,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        Security $security
     ): Response {
         $project = $projectRepository->find($id);
 
         if (!$project) {
             return $this->redirectToRoute('app_homepage');
+        }
+
+        // Get the currently authenticated user
+        $employee = $security->getUser();
+
+        if ($security->isGranted('ROLE_ADMIN')) {
+            
+        } elseif ($security->isGranted('ROLE_USER')) {
+
+            //if it's a user, check if the employee is associated with the project
+            if (!$project->getEmployees()->contains($employee)) {
+                return $this->redirectToRoute('app_project', ['id' => $project->getId()]);
+            }
+        } else {
+            // else redirect if employee is not associated with the project
+            return $this->redirectToRoute('app_project', ['id' => $project->getId()]);
         }
 
         $task = new Task();
@@ -58,12 +76,31 @@ final class TaskController extends AbstractController
         Request $request,
         ProjectRepository $projectRepository,
         TaskRepository $taskRepository,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        Security $security
     ): Response {
         
+       
+
         $project = $projectRepository->find($id);
         if (!$project) {
             return $this->redirectToRoute('app_homepage');
+        }
+
+         // Get the currently authenticated user
+        $employee = $security->getUser();
+
+        if ($security->isGranted('ROLE_ADMIN')) {
+            
+        } elseif ($security->isGranted('ROLE_USER')) {
+
+            //if it's a user, check if the employee is associated with the project
+            if (!$project->getEmployees()->contains($employee)) {
+                return $this->redirectToRoute('app_project', ['id' => $project->getId()]);
+            }
+        } else {
+            // else redirect if employee is not associated with the project
+            return $this->redirectToRoute('app_project', ['id' => $project->getId()]);
         }
 
         $task = $taskRepository->find($taskId);
@@ -91,13 +128,30 @@ final class TaskController extends AbstractController
         int $taskId,
         ProjectRepository $projectRepository,
         TaskRepository $taskRepository,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        Security $security
     ): Response {
             
             $project = $projectRepository->find($id);
             if (!$project) {
                 return $this->redirectToRoute('app_homepage');
             }
+
+              // Get the currently authenticated user
+        $employee = $security->getUser();
+
+        if ($security->isGranted('ROLE_ADMIN')) {
+            
+        } elseif ($security->isGranted('ROLE_USER')) {
+
+            //if it's a user, check if the employee is associated with the project
+            if (!$project->getEmployees()->contains($employee)) {
+                return $this->redirectToRoute('app_project', ['id' => $project->getId()]);
+            }
+        } else {
+            // else redirect if employee is not associated with the project
+            return $this->redirectToRoute('app_project', ['id' => $project->getId()]);
+        }
     
             $task = $taskRepository->find($taskId);
     
