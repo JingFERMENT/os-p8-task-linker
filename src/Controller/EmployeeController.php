@@ -42,10 +42,11 @@ final class EmployeeController extends AbstractController
         // to several mandatory fields, we set default values
         $employee->setStartDate(new \DateTime('today'));
         $employee->setContract(ContractName::PermanentContract);
+        
         $employee->setRoles(['ROLE_USER']);
         $employee->setRole(RoleName::Collaborator);
         $employee->setIsActif(true);
-
+      
         $form = $this->createForm(RegistrationFormType::class, $employee);
         $form->handleRequest($request);
 
@@ -59,13 +60,7 @@ final class EmployeeController extends AbstractController
             $entityManager->persist($employee);
             $entityManager->flush();
 
-            $userAuthenticator->authenticateUser(
-                $employee,
-                $loginFormAuthenticator,
-                $request
-            );
-
-            return $this->redirectToRoute('app_projects');
+            return $this->redirectToRoute('app_login');
         }  // ELSE {
         //     dd($form);
         // }

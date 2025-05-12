@@ -1,0 +1,11 @@
+# See the configuration reference at https://symfony.com/bundles/SchebTwoFactorBundle/6.x/configuration.html
+scheb_two_factor:
+    security_tokens:
+        - Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken
+        - Symfony\Component\Security\Http\Authenticator\Token\PostAuthenticationToken
+    google:
+        enabled: true
+        server_name: 'My website'    # Server name used in QR code
+        issuer: TaskLinker                    # Issuer name used in QR code
+        digits: 6                             # Number of digits in authentication code
+        leeway: 0                             # Acceptable time drift in seconds, must be less or equal than 30 seconds

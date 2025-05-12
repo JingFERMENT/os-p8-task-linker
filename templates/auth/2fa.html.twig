@@ -1,0 +1,17 @@
+{% extends '/auth/base-logout.html.twig' %}
+
+{% block title %}Confirmez votre connexion{% endblock %}
+{% block body %}
+<h1>Confirmez votre connexion</h1>
+
+<form action="{{ path('2fa_login_check') }}" method="POST">
+    <p>Scannez le QR Code avec l'application Google Auth et entrez le code :</p>
+    <img src="{{ path('2fa_qr_code' ) }}" alt="2FA_CODE" class="qrcode" />
+    <div>
+        <label for="_auth_code">Code Google Auth :</label>
+        <input type="text" name="_auth_code" id="_auth_code" />
+    </div>
+    <button class="button button-submit">Se connecter</button>
+</form>
+
+{% endblock %}

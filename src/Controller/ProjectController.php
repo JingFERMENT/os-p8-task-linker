@@ -27,7 +27,11 @@ final class ProjectController extends AbstractController
     public function index(ProjectRepository $projectRepository, Security $security): Response
     {
         // Get the currently authenticated user
-        $employee = $security->getUser();        
+        $employee = $security->getUser();
+        
+        if (!$employee->isGoogleAuthenticatorEnabled()) {
+            return $this->redirectToRoute('enable_2fa');
+        }
 
         // Check if the user has the ROLE_ADMIN role    
         if ($this->isGranted('ROLE_ADMIN')) {

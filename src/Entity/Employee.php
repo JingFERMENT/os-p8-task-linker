@@ -12,13 +12,17 @@ use App\Enum\RoleName;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
+use Scheb\TwoFactorBundle\Model\Google\TwoFactorInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: EmployeeRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
-class Employee implements UserInterface, PasswordAuthenticatedUserInterface
+class Employee implements UserInterface, PasswordAuthenticatedUserInterface, TwoFactorInterface
 {
+    #[ORM\Column(type: 'string', nullable: true)]
+    private ?string $googleAuthenticatorSecret;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -368,4 +372,25 @@ class Employee implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return strtoupper($this->firstname[0] . $this->lastname[0]);
     }
+
+    public function isGoogleAuthenticatorEnabled(): bool
+   {
+       return null !== $this->googleAuthenticatorSecret;
+   }
+
+   public function getGoogleAuthenticatorUsername(): string
+   {
+       return $this->getEmail();
+   }
+
+   public function getGoogleAuthenticatorSecret(): ?string
+   {
+       return $this->googleAuthenticatorSecret;
+   }
+
+   public function setGoogleAuthenticatorSecret(?string $googleAuthenticatorSecret): void
+   {
+       $this->googleAuthenticatorSecret = $googleAuthenticatorSecret;
+       
+   }
 }
