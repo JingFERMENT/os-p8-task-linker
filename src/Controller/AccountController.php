@@ -27,14 +27,16 @@ class AccountController extends AbstractController
         GoogleAuthenticatorInterface $googleAuthenticator,
         EntityManagerInterface $entityManager
     ) {
-        $user = $this->getUser();
+        $employee = $this->getUser();
         $form = $this->createForm(Enable2FAType::class);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            
             // Generate and store the secret
             $secret = $googleAuthenticator->generateSecret();
-            $user->setGoogleAuthenticatorSecret($secret);
+            $employee->setGoogleAuthenticatorSecret($secret);
+            
             // $user->setRoles(['ROLE_USER', 'IS_AUTHENTICATED_2FA_IN_PROGRESS']);
             $entityManager->flush();
 
@@ -63,17 +65,20 @@ class AccountController extends AbstractController
 
 
     #[Route('/2fa', name: '2fa_login')]
-    public function displayGoogleAuthenticator(): Response
+    public function displayGoogleAuthenticator(EntityManagerInterface $entityManager): Response
     {
         
-        // $employee = $this->getUser();
+        $employee = $this->getUser();
         
-        // if ($employee instanceof GoogleAuthenticatorTwoFactorInterface && $employee->isGoogleAuthenticatorEnabled()) 
-        // {
-        // // Don't show the QR code again, just show the code entry page
-        //     return $this->render('auth/2fa_code_entry.html.twig');
-        // }
+        if ($employee->getQrCodeShown()) {
+        // Don't show the QR code again, just show the code entry page
+            return $this->render('auth/2fa_code_entry.html.twig');
+        }
         
+        // Set the QR code shown flag to true
+        $employee->setQrCodeShown(true);
+        $entityManager->flush();
+
         return $this->render('auth/2fa.html.twig', [
             'qrCode' => $this->generateUrl('2fa_qr_code'),
         ]);

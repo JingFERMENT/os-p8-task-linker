@@ -20,6 +20,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 class Employee implements UserInterface, PasswordAuthenticatedUserInterface, TwoFactorInterface
 {
+     #[ORM\Column]
+    //add another column to store if the qr code is shown or not
+    private ?bool $qrCodeShown = false;
+
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $googleAuthenticatorSecret;
 
@@ -393,4 +397,24 @@ class Employee implements UserInterface, PasswordAuthenticatedUserInterface, Two
        $this->googleAuthenticatorSecret = $googleAuthenticatorSecret;
        
    }
+
+    /**
+     * Get the value of qrCodeShown
+     */ 
+    public function getQrCodeShown()
+    {
+        return $this->qrCodeShown;
+    }
+
+    /**
+     * Set the value of qrCodeShown
+     *
+     * @return  self
+     */ 
+    public function setQrCodeShown($qrCodeShown)
+    {
+        $this->qrCodeShown = $qrCodeShown;
+
+        return $this;
+    }
 }
