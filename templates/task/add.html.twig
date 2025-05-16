@@ -3,43 +3,32 @@
 {% block title %}Créer une tâche
 {% endblock %}
 
+{% block header %}
+	<h1>Créer une tâche</h1>
+{% endblock %}
+
 {% block body %}
-	<main>
-		<header>
-			<div id="current-user">
-				{% if app.user %}
-				<a href = "{{path('app_logout')}}" class="connected-avatar">{{app.user.getInitials()}}</a>	
-				{% endif %}
-			</div>
-			<div id="title-page">
-				<h1>Créer une tâche</h1>
-			</div>
-		</header>
-		<div id="content">
-			{{form_start(form)}}
+	{{form_start(form)}}
 
-			{{form_row(form.title)}}
-			{{form_row(form.description)}}
-			{{form_row(form.deadline)}}
-			{{form_row(form.statut)}}
-			{{form_row(form.employee)}}
+	{{form_row(form.title)}}
+	{{form_row(form.description)}}
+	{{form_row(form.deadline)}}
+	{{form_row(form.statut)}}
+	{{form_row(form.employee)}}
 
-			<button class="button button-submit">Ajouter</button>		
-			{{form_end(form)}}
-		</div>
-	</main>
+	<button class="button button-submit">Ajouter</button>
+	{{form_end(form)}}
 
 {% endblock %}
 
 {% block javascripts %}
 	{{ parent() }}
-	<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        flatpickr(".js-datepicker", {
-            dateFormat: "d/m/Y", // Format français jj/mm/aaaa
-            allowInput: true
-        });
-    });
-</script>
+	 <script>
+	    document.addEventListener("DOMContentLoaded", function () {
+	        flatpickr(".js-datepicker", {
+	            dateFormat: "d/m/Y", // Format français jj/mm/aaaa
+	            allowInput: true
+	        });
+	    });
+	</script>
 {% endblock %}
-

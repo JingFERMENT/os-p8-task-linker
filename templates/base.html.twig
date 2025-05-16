@@ -43,7 +43,20 @@
 					{% endif %}
 				</ul>
 			</nav>
-			{% block body %}{% endblock %}
+			<main>
+				<header>
+					<div id="current-user">
+						{% if app.user %}
+							<a href="{{path('app_logout')}}" class="connected-avatar">{{app.user.getInitials()}}</a>
+						{% endif %}
+					</div>
+					<div id="title-page">
+						{% block header %}{% endblock %}
+					</div>
+				</header>
+				<div id="content">
+					{% block body %}{% endblock %}
+				</div>
 		</div>
 	</body>
 </html>

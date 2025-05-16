@@ -1,45 +1,34 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{form.vars.value.title}}
+{% block title %}
+	{{form.vars.value.title}}
+{% endblock %}
+
+{% block header %}
+	<h1>{{form.vars.value.title}}</h1>
 {% endblock %}
 
 {% block body %}
-	<main>
-		<header>
-			<div id="current-user" >
-				{% if app.user %}
-				<a href = "{{path('app_logout')}}" class="connected-avatar">{{app.user.getInitials()}}</a>	
-				{% endif %}
-			</div>
-			<div id="title-page">
-				<h1>{{form.vars.value.title}}</h1>
-			</div>
-		</header>
-		<div id="content">
-			{{form_start(form)}}
-			{{form_row(form.title)}}
-			{{form_row(form.description)}}
-			{{form_row(form.deadline)}}
-			{{form_row(form.statut)}}
-			{{form_row(form.employee)}}
-			<br>
-			<button class="button button-submit">Modifier</button>
-			<a href="{{path('app_task_delete', {'id': form.vars.value.project.id, 'taskId': form.vars.value.id})}}" class="delete-task">Supprimer la tâche</a>
-			{{form_end(form)}}
-		</div>
-	</main>
-
+	{{form_start(form)}}
+	{{form_row(form.title)}}
+	{{form_row(form.description)}}
+	{{form_row(form.deadline)}}
+	{{form_row(form.statut)}}
+	{{form_row(form.employee)}}
+	<br>
+	<button class="button button-submit">Modifier</button>
+	<a href="{{path('app_task_delete', {'id': form.vars.value.project.id, 'taskId': form.vars.value.id})}}" class="delete-task">Supprimer la tâche</a>
+	{{form_end(form)}}
 {% endblock %}
 
 {% block javascripts %}
 	{{ parent() }}
-	<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        flatpickr(".js-datepicker", {
-            dateFormat: "d/m/Y", // Format français jj/mm/aaaa
-            allowInput: true
-        });
-    });
-</script>
+	 <script>
+	    document.addEventListener("DOMContentLoaded", function () {
+	        flatpickr(".js-datepicker", {
+	            dateFormat: "d/m/Y", // Format français jj/mm/aaaa
+	            allowInput: true
+	        });
+	    });
+	</script>
 {% endblock %}
-

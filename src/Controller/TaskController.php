@@ -20,7 +20,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 // This attribute ensures that the user is authenticated before accessing any route in this controller.
 final class TaskController extends AbstractController
-{  
+{
 
     #[Route('projects/{id}/task/add', name: 'app_task_add')]
     public function taskAdd(
@@ -35,27 +35,23 @@ final class TaskController extends AbstractController
             return $this->redirectToRoute('app_homepage');
         }
 
-        try {
-            // Check if the user has access to the project
-            $this->denyAccessUnlessGranted('PROJECT_VIEW', $project);
-        } catch (AccessDeniedException $e) {
-            // Handle the exception if access is denied
+        if (!$this->isGranted('PROJECT_VIEW', $project)) {
             return $this->redirectToRoute('app_projects');
         }
 
         $task = new Task();
         $task->setProject($project);
-        
+
         $form = $this->createForm(TaskType::class, $task);
-        
+
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid()){ 
-            $entityManager->persist($task); 
-            $entityManager->flush(); 
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->persist($task);
+            $entityManager->flush();
             return $this->redirectToRoute('app_project', ['id' => $task->getProject()->getId()]);
         }
-            return $this->render('task/add.html.twig', [
+        return $this->render('task/add.html.twig', [
             'form' => $form
         ]);
     }
@@ -75,11 +71,7 @@ final class TaskController extends AbstractController
             return $this->redirectToRoute('app_homepage');
         }
 
-         try {
-            // Check if the user has access to the project
-            $this->denyAccessUnlessGranted('PROJECT_VIEW', $project);
-        } catch (AccessDeniedException $e) {
-            // Handle the exception if access is denied
+        if (!$this->isGranted('PROJECT_VIEW', $project)) {
             return $this->redirectToRoute('app_projects');
         }
 
@@ -88,16 +80,16 @@ final class TaskController extends AbstractController
         if (!$task) {
             return $this->redirectToRoute('app_project', ['id' => $project->getId()]);
         }
-        
+
         $form = $this->createForm(TaskType::class, $task);
 
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid()){
-            $entityManager->flush(); 
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->flush();
             return $this->redirectToRoute('app_project', ['id' => $task->getProject()->getId()]);
         }
-            return $this->render('task/edit.html.twig', [
+        return $this->render('task/edit.html.twig', [
             'form' => $form
         ]);
     }
@@ -110,29 +102,24 @@ final class TaskController extends AbstractController
         TaskRepository $taskRepository,
         EntityManagerInterface $entityManager,
     ): Response {
-            
-            $project = $projectRepository->find($id);
-            if (!$project) {
-                return $this->redirectToRoute('app_homepage');
-            }
 
-         try {
-            // Check if the user has access to the project
-            $this->denyAccessUnlessGranted('PROJECT_VIEW', $project);
-        } catch (AccessDeniedException $e) {
-            // Handle the exception if access is denied
+        $project = $projectRepository->find($id);
+        if (!$project) {
+            return $this->redirectToRoute('app_homepage');
+        }
+
+        if (!$this->isGranted('PROJECT_VIEW', $project)) {
             return $this->redirectToRoute('app_projects');
         }
-    
-            $task = $taskRepository->find($taskId);
-    
-            if (!$task) {
-                return $this->redirectToRoute('app_project', ['id' => $project->getId()]);
-            }
-            
-            $entityManager->remove($task); 
-            $entityManager->flush();
-            return $this->redirectToRoute('app_project', ['id' => $project->getId()]);
-    }  
 
+        $task = $taskRepository->find($taskId);
+
+        if (!$task) {
+            return $this->redirectToRoute('app_project', ['id' => $project->getId()]);
+        }
+
+        $entityManager->remove($task);
+        $entityManager->flush();
+        return $this->redirectToRoute('app_project', ['id' => $project->getId()]);
+    }
 }

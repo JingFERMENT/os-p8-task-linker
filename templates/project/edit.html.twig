@@ -4,27 +4,15 @@
 	{{form.vars.value.name}}
 {% endblock %}
 
+{% block header %}
+	<h1>{{form.vars.value.name}}</h1>
+{% endblock %}
+
 {% block body %}
-	<main>
-		<header>
-			<div id="current-user">
-				{% if app.user %}
-					<a href="{{path('app_logout')}}" class="connected-avatar">{{app.user.getInitials()}}</a>
-				{% endif %}
-			</div>
-			<div id="title-page">
-				<h1>{{form.vars.value.name}}</h1>
-			</div>
-		</header>
-		<div id="content">
-			{{form_start(form)}}
-
-			{{form_row(form.name)}}
-			{{form_row(form.employees)}}
-			<br>
-			<button class="button button-submit">Modifier</button>
-
-			{{form_end(form)}}
-		</div>
-	</main>
+		{{form_start(form)}}
+		{{form_row(form.name)}}
+		{{form_row(form.employees)}}
+		<br>
+		<button class="button button-submit">Modifier</button>
+		{{form_end(form)}}
 {% endblock %}

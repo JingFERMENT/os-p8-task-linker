@@ -52,6 +52,7 @@ class RegistrationFormType extends AbstractType
                     ],
                 ],
                 'mapped' => false,
+                'invalid_message' => 'Les mots de passe doivent correspondre.',
                 'constraints' => [
                     new NotBlank([
                         'message' => 'Merci de saisir un mot de passe',

@@ -3,30 +3,20 @@
 {% block title %}Liste des employées
 {% endblock %}
 
+{% block header %}
+	<h1>{{form.vars.value.firstname ~ ' ' ~ form.vars.value.lastname}}</h1>
+{% endblock %}
+
 {% block body %}
-	<main>
-		<header>
-			<div id="current-user">
-				{% if app.user %}
-					<a href="{{path('app_logout')}}" class="connected-avatar">{{app.user.getInitials()}}</a>
-				{% endif %}
-			</div>
-			<div id="title-page">
-				<h1>{{form.vars.value.firstname ~ ' ' ~ form.vars.value.lastname}}</h1>
-			</div>
-		</header>
-		<div id="content">
-			{{form_start(form)}}
-			{{form_row(form.lastname)}}
-			{{form_row(form.firstname)}}
-			{{form_row(form.email)}}
-			<div class="form-flex">
-				{{form_row(form.startDate)}}
-				{{form_row(form.contract)}}
-			</div>
-			{{form_row(form.role)}}
-			<button class="button button-submit">Enregistrer</button>
-			{{form_end(form)}}
-		</div>
-	</main>
+	{{form_start(form)}}
+	{{form_row(form.lastname)}}
+	{{form_row(form.firstname)}}
+	{{form_row(form.email)}}
+	<div class="form-flex">
+		{{form_row(form.startDate)}}
+		{{form_row(form.contract)}}
+	</div>
+	{{form_row(form.role)}}
+	<button class="button button-submit">Enregistrer</button>
+	{{form_end(form)}}
 {% endblock %}

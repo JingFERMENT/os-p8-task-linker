@@ -28,7 +28,7 @@ final class ProjectController extends AbstractController
     {
         // Get the currently authenticated user
         $employee = $security->getUser();
-        
+
         if (!$employee->isGoogleAuthenticatorEnabled()) {
             return $this->redirectToRoute('enable_2fa');
         }
@@ -66,14 +66,10 @@ final class ProjectController extends AbstractController
             return $this->redirectToRoute('app_projects');
         }
 
-        try {
-            // Check if the user has access to the project
-            $this->denyAccessUnlessGranted('PROJECT_VIEW', $project);
-        } catch (AccessDeniedException $e) {
-            // Handle the exception if access is denied
+        if (!$this->isGranted('PROJECT_VIEW', $project)) {
             return $this->redirectToRoute('app_projects');
         }
-        
+
         // fetch the employees 
         $employees = $employeeRepository->findEmployeesByProject($id);
 

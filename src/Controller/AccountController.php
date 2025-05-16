@@ -69,14 +69,15 @@ class AccountController extends AbstractController
     {
         
         $employee = $this->getUser();
-        
+            
         if ($employee->getQrCodeShown()) {
         // Don't show the QR code again, just show the code entry page
             return $this->render('auth/2fa_code_entry.html.twig');
         }
         
         // Set the QR code shown flag to true
-        $employee->setQrCodeShown(true);
+       $employee->setQrCodeShown(true);
+        
         $entityManager->flush();
 
         return $this->render('auth/2fa.html.twig', [

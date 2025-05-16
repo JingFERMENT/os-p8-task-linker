@@ -3,54 +3,44 @@
 {% block title %}Liste des employées
 {% endblock %}
 
+{% block header %}
+	<h1>Équipe</h1>
+{% endblock %}
+
 {% block body %}
-	<main>
-		<header>
-			<div id="current-user">
-				{% if app.user %}
-					<a href="{{path('app_logout')}}" class="connected-avatar">{{app.user.getInitials()}}</a>
-				{% endif %}
-			</div>
-			<div id="title-page">
-				<h1>Équipe</h1>
-			</div>
-		</header>
-		<div id="content">
-			<table id="team-container">
-				<thead>
-					<tr>
-						<th>Prénom, Nom</th>
-						<th>Statut</th>
-						<th>Actions</th>
-					</tr>
-				</thead>
-				<tbody>
-					{% for employee in employees %}
-						<tr>
-							<td>
-								<div class="employee-infos">
-									<div class="employee-avatar">
-										{{employee.getInitials()}}
-									</div>
-									<div class="employee-coords">
-										<strong>{{employee.firstname ~ ' ' ~ employee.lastname}}</strong>
-										<span>{{employee.email}}</span>
-									</div>
-								</div>
-							</td>
-							<td>{{employee.contract.getLabel()}}</td>
-							<td>
-								<a class="button button-edit-team" href="{{path('app_employees_edit', {'id': employee.id})}}">
-									Éditer
-								</a>
-								<a class="delete-team" href="{{path('app_employees_delete',{'id': employee.id} )}}">
-									Supprimer
-								</a>
-							</td>
-						</tr>
-					{% endfor %}
-				</tbody>
-			</table>
-		</div>
-	</main>
+	<table id="team-container">
+		<thead>
+			<tr>
+				<th>Prénom, Nom</th>
+				<th>Statut</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for employee in employees %}
+				<tr>
+					<td>
+						<div class="employee-infos">
+							<div class="employee-avatar">
+								{{employee.getInitials()}}
+							</div>
+							<div class="employee-coords">
+								<strong>{{employee.firstname ~ ' ' ~ employee.lastname}}</strong>
+								<span>{{employee.email}}</span>
+							</div>
+						</div>
+					</td>
+					<td>{{employee.contract.getLabel()}}</td>
+					<td>
+						<a class="button button-edit-team" href="{{path('app_employees_edit', {'id': employee.id})}}">
+							Éditer
+						</a>
+						<a class="delete-team" href="{{path('app_employees_delete',{'id': employee.id} )}}">
+							Supprimer
+						</a>
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
 {% endblock %}
