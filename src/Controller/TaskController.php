@@ -35,7 +35,7 @@ final class TaskController extends AbstractController
             return $this->redirectToRoute('app_homepage');
         }
 
-        if (!$this->isGranted('PROJECT_VIEW', $project)) {
+        if (!$this->isGranted('ACCESS_PROJECT', $project)) {
             return $this->redirectToRoute('app_projects');
         }
 
@@ -71,7 +71,7 @@ final class TaskController extends AbstractController
             return $this->redirectToRoute('app_homepage');
         }
 
-        if (!$this->isGranted('PROJECT_VIEW', $project)) {
+        if (!$this->isGranted('ACCESS_PROJECT', $project)) {
             return $this->redirectToRoute('app_projects');
         }
 
@@ -104,11 +104,12 @@ final class TaskController extends AbstractController
     ): Response {
 
         $project = $projectRepository->find($id);
+        
         if (!$project) {
             return $this->redirectToRoute('app_homepage');
         }
 
-        if (!$this->isGranted('PROJECT_VIEW', $project)) {
+        if (!$this->isGranted('ROLE_ADMIN')) {
             return $this->redirectToRoute('app_projects');
         }
 

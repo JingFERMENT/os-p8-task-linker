@@ -4,19 +4,19 @@ namespace App\Security\Voter;
 
 use App\Entity\Employee;
 use App\Entity\Project;
+use App\Entity\Task;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 final class ProjectVoter extends Voter
 {
-    public const VIEW = 'PROJECT_VIEW';
+    public const ACCESS_PROJECT = 'ACCESS_PROJECT';
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        $result = ($attribute === self::VIEW
-            && ($subject instanceof Project));
-
+        return ($attribute === self::ACCESS_PROJECT) 
+            && ($subject === null
+                || $subject instanceof Project);
         return $result;
     }
 
@@ -29,30 +29,27 @@ final class ProjectVoter extends Voter
             return false;
         }
 
-       /** @var Project $project */
-        $project = $subject;
-
         // Admins can always view
         if (in_array('ROLE_ADMIN', $employee->getRoles())) {
             return true;
         }
+        
+        // if the project is active
+        if( $subject instanceof Project) {
+            return $this->canAccessProject($attribute, $subject, $employee);
+        }
 
-        // If the project is null, this is the list of all projects
-        // so the user can view it
-        if (null === $project) {
+       return false;  
+    }
+
+    private function canAccessProject(string $attribute, Project $project, Employee $employee): bool
+    {
+        $attribute === self::ACCESS_PROJECT;
+        // Check if the employee is a member of the project
+        if ($project->getEmployees()->contains($employee)) {
             return true;
         }
 
-        foreach ($project->getEmployees() as $assignedEmployee) {
-          
-            if( $assignedEmployee->getId()=== $employee->getId()) {
-                return true;
-            } 
-        }
-
-       return false;
-        
-
-        
+        return false;
     }
 }

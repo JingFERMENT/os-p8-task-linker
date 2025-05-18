@@ -38,11 +38,11 @@ final class ProjectController extends AbstractController
             // If the user is an admin, fetch all projects
             $projects = $projectRepository->findAll();
         } elseif ($security->isGranted('ROLE_USER')) {
-
-            $projects = $projectRepository->findByEmployee($employee); // Fetch projects associated with the employee
+            // If the user is a regular employee, fetch projects associated with them
+            $projects = $projectRepository->findByEmployee($employee); 
         } else {
-
-            return $this->redirectToRoute('app_projects'); // Redirect if no valid role is found
+            // Redirect if no valid role is found
+            return $this->redirectToRoute('app_projects'); 
         }
 
         return $this->render('project/list.html.twig', [
@@ -66,7 +66,7 @@ final class ProjectController extends AbstractController
             return $this->redirectToRoute('app_projects');
         }
 
-        if (!$this->isGranted('PROJECT_VIEW', $project)) {
+        if (!$this->isGranted('ACCESS_PROJECT', $project)) {
             return $this->redirectToRoute('app_projects');
         }
 
@@ -138,7 +138,6 @@ final class ProjectController extends AbstractController
         ]);
     }
 
-    #[IsGranted('ROLE_ADMIN')]
     #[Route('/projects/{id}/edit', name: 'app_project_edit')]
 
     public function projectEdit(
@@ -147,6 +146,10 @@ final class ProjectController extends AbstractController
         ProjectRepository $projectRepository,
         EntityManagerInterface $entityManager
     ): Response {
+
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            return $this->redirectToRoute('app_projects');
+        }
 
         $project = $projectRepository->find($id);
         if (!$project) {
@@ -191,7 +194,7 @@ final class ProjectController extends AbstractController
         ]);
     }
 
-    #[IsGranted('ROLE_ADMIN')]
+    // #[IsGranted('ROLE_ADMIN')]
     #[Route('/projects/{id}/archive', name: 'app_project_archive'),]
 
     public function archiveProject(
@@ -199,6 +202,10 @@ final class ProjectController extends AbstractController
         ProjectRepository $projectRepository,
         EntityManagerInterface $entityManager
     ): Response {
+
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            return $this->redirectToRoute('app_projects');
+        }
 
         $project = $projectRepository->find($id);
 
