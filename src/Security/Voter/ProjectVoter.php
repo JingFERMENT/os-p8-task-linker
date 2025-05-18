@@ -14,7 +14,7 @@ final class ProjectVoter extends Voter
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        return ($attribute === self::ACCESS_PROJECT) 
+        return ($attribute === self::ACCESS_PROJECT)
             && ($subject === null
                 || $subject instanceof Project);
         return $result;
@@ -23,7 +23,7 @@ final class ProjectVoter extends Voter
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         $employee = $token->getUser();
-       
+
         // if the user is anonymous, do not grant access
         if (!$employee instanceof Employee) {
             return false;
@@ -33,19 +33,32 @@ final class ProjectVoter extends Voter
         if (in_array('ROLE_ADMIN', $employee->getRoles())) {
             return true;
         }
-        
+
+        // if the user is not an admin, check if they are a member of the project
+
         // if the project is active
-        if( $subject instanceof Project) {
+        if ($subject instanceof Project && $attribute === self::ACCESS_PROJECT) {
             return $this->canAccessProject($attribute, $subject, $employee);
         }
 
-       return false;  
+        return false;
     }
 
     private function canAccessProject(string $attribute, Project $project, Employee $employee): bool
     {
-        $attribute === self::ACCESS_PROJECT;
-        // Check if the employee is a member of the project
+        // Check if the employee is assigned to the tasks of the project
+        $tasks = $project->getTasks();
+
+        foreach ($tasks as $task) {
+            $assignedEmployees = $task->getEmployee();
+
+            if ($assignedEmployees !== null && ($assignedEmployees->getId() === $employee->getId())) {
+                return true;
+            }
+        }
+
+
+        // Check if the employee is assigned to project
         if ($project->getEmployees()->contains($employee)) {
             return true;
         }

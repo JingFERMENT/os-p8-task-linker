@@ -71,11 +71,12 @@ final class TaskController extends AbstractController
             return $this->redirectToRoute('app_homepage');
         }
 
+        $task = $taskRepository->find($taskId);
+
         if (!$this->isGranted('ACCESS_PROJECT', $project)) {
             return $this->redirectToRoute('app_projects');
         }
-
-        $task = $taskRepository->find($taskId);
+            
 
         if (!$task) {
             return $this->redirectToRoute('app_project', ['id' => $project->getId()]);
@@ -104,7 +105,7 @@ final class TaskController extends AbstractController
     ): Response {
 
         $project = $projectRepository->find($id);
-        
+
         if (!$project) {
             return $this->redirectToRoute('app_homepage');
         }

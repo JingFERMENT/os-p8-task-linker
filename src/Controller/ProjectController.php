@@ -32,18 +32,25 @@ final class ProjectController extends AbstractController
         if (!$employee->isGoogleAuthenticatorEnabled()) {
             return $this->redirectToRoute('enable_2fa');
         }
-
-        // Check if the user has the ROLE_ADMIN role    
+   
         if ($this->isGranted('ROLE_ADMIN')) {
-            // If the user is an admin, fetch all projects
+             // Admin: show all projects
             $projects = $projectRepository->findAll();
         } elseif ($security->isGranted('ROLE_USER')) {
-            // If the user is a regular employee, fetch projects associated with them
-            $projects = $projectRepository->findByEmployee($employee); 
+            
+            // If the user is a regular employee, fetch projects associated with them 
+            $directProjects = $projectRepository->findByEmployee($employee); 
+            
+            $indirectProjects = $projectRepository->findByTasksAssignedTo($employee); 
+            
+            // Merge the two collections and remove duplicates
+            $projects = array_unique(array_merge($directProjects, $indirectProjects), SORT_REGULAR);
+            
         } else {
             // Redirect if no valid role is found
             return $this->redirectToRoute('app_projects'); 
         }
+
 
         return $this->render('project/list.html.twig', [
             'projects' => $projects,
@@ -65,7 +72,7 @@ final class ProjectController extends AbstractController
         if (!$project) {
             return $this->redirectToRoute('app_projects');
         }
-
+ 
         if (!$this->isGranted('ACCESS_PROJECT', $project)) {
             return $this->redirectToRoute('app_projects');
         }

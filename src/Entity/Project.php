@@ -151,7 +151,7 @@ class Project
     /**
      * @return Collection<int, Task>
      */
-    public function getTask(): Collection
+    public function getTasks(): Collection
     {
         return $this->task;
     }

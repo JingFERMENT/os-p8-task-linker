@@ -29,6 +29,17 @@ class ProjectRepository extends ServiceEntityRepository
            ;
        }
 
+       public function findByTasksAssignedTo(Employee $employee): Array
+       {
+           return $this->createQueryBuilder('p')
+               ->join('p.task', 't')
+               ->where('t.employee = :employee')
+               ->setParameter('employee', $employee)
+               ->getQuery()
+               ->getResult()
+           ;
+       }
+
            //    /**
     //     * @return Project[] Returns an array of Project objects
     //     */
