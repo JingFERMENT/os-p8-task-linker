@@ -3,3 +3,6 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+verify_email:
+    path: /verify/email
+    controller: SymfonyCasts\Bundle\VerifyEmail\Controller\VerifyEmailController

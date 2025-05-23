@@ -46,7 +46,7 @@ final class ProjectVoter extends Voter
 
     private function canAccessProject(string $attribute, Project $project, Employee $employee): bool
     {
-        // Check if the employee is assigned to the tasks of the project
+        
         $tasks = $project->getTasks();
 
         foreach ($tasks as $task) {

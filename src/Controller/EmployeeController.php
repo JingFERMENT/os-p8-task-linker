@@ -8,18 +8,25 @@ use App\Enum\RoleName;
 use App\Form\EmployeeType;
 use App\Form\RegistrationFormType;
 use App\Repository\EmployeeRepository;
+use App\Security\EmailVerifier;
 use App\Security\LoginFormAuthenticator;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
-use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\CssSelector\XPath\TranslatorInterface;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
-
+use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
+use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
+use Symfony\Component\Mime\Email;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mailer\Transport\TransportInterface;
 
 final class EmployeeController extends AbstractController
 {
@@ -35,18 +42,18 @@ final class EmployeeController extends AbstractController
         Request $request,
         UserPasswordHasherInterface $userPasswordHasher,
         EntityManagerInterface $entityManager,
-        UserAuthenticatorInterface $userAuthenticator,
-        LoginFormAuthenticator $loginFormAuthenticator
+        VerifyEmailHelperInterface $verifyEmailHelper,
+        TransportInterface $mailer
     ): Response {
         $employee = new Employee();
         // to several mandatory fields, we set default values
         $employee->setStartDate(new \DateTime('today'));
         $employee->setContract(ContractName::PermanentContract);
-        
+
         $employee->setRoles(['ROLE_USER']);
         $employee->setRole(RoleName::Collaborator);
         $employee->setIsActif(true);
-      
+
         $form = $this->createForm(RegistrationFormType::class, $employee);
         $form->handleRequest($request);
 
@@ -60,10 +67,25 @@ final class EmployeeController extends AbstractController
             $entityManager->persist($employee);
             $entityManager->flush();
 
+            // Generate a signed email verification link 
+            $signatureComponents = $verifyEmailHelper->generateSignature(
+                'app_verify_email',
+                $employee->getId(),
+                $employee->getEmail(),
+                ['id' => $employee->getId()]
+            );
+
+            // Create the email with the signed URL
+            $email = (new Email())
+                ->from(new Address('TEST@TEST.com', 'Test'))
+                ->to($employee->getEmail())
+                ->subject('Merci de confirmer votre email')
+                ->html('<p>Merci de confirmer votre email en cliquant <a href="' . $signatureComponents->getSignedUrl() . '">ici</a>.</p>');
+
+            // Send the verification email
+            $mailer->send($email);
             return $this->redirectToRoute('app_login');
-        }  // ELSE {
-        //     dd($form);
-        // }
+        }
 
         return $this->render('auth/register.html.twig', [
             'registrationForm' => $form,
@@ -93,7 +115,7 @@ final class EmployeeController extends AbstractController
 
     #[Route('/employees', name: 'app_employees')]
     public function index(EmployeeRepository $employeeRepository): Response
-    {        
+    {
         $employees = $employeeRepository->findAll();
 
         return $this->render('employee/list.html.twig', [
@@ -122,7 +144,7 @@ final class EmployeeController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $businessRole = $employee->getRole();
 
-            if($businessRole === RoleName::ProjectManager) {
+            if ($businessRole === RoleName::ProjectManager) {
                 $employee->setRoles(['ROLE_ADMIN']);
             } else {
                 $employee->setRoles(['ROLE_USER']);

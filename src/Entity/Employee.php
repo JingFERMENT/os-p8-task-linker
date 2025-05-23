@@ -20,7 +20,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity(fields: ['email'], message: 'Cet email est déjà utilisé.')]
 class Employee implements UserInterface, PasswordAuthenticatedUserInterface, TwoFactorInterface
 {
-     #[ORM\Column]
+    #[ORM\Column(type: 'boolean')]
+    private ?bool $isVerified = false;
+
+    #[ORM\Column(type: 'boolean')]
     //add another column to store if the qr code is shown or not
     private ?bool $qrCodeShown = false;
 
@@ -414,6 +417,26 @@ class Employee implements UserInterface, PasswordAuthenticatedUserInterface, Two
     public function setQrCodeShown($qrCodeShown)
     {
         $this->qrCodeShown = $qrCodeShown;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of isVerified
+     */ 
+    public function getIsVerified()
+    {
+        return $this->isVerified;
+    }
+
+    /**
+     * Set the value of isVerified
+     *
+     * @return  self
+     */ 
+    public function setIsVerified($isVerified)
+    {
+        $this->isVerified = $isVerified;
 
         return $this;
     }
